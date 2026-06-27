@@ -29,13 +29,26 @@ export default function WaitlistForm() {
     setStatus('submitting')
 
     try {
-      // TODO: wire to the real waitlist endpoint (or Doerfy form action).
-      // e.g. await fetch('/api/waitlist', { method: 'POST', body: JSON.stringify({ email: value }) })
-      await new Promise((res) => setTimeout(res, 900))
+      // Submits to Netlify Forms. The "waitlist" form is registered at build
+      // time via public/__forms.html. Works once deployed on Netlify; a local
+      // `next dev` returns 405 for this POST, which surfaces as the error state.
+      const body = new URLSearchParams({
+        'form-name': 'waitlist',
+        'bot-field': '',
+        source: 'homepage-waitlist',
+        email: value,
+      }).toString()
+
+      const res = await fetch('/__forms.html', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+        body,
+      })
+      if (!res.ok) throw new Error(`Form submission failed (${res.status})`)
       setStatus('success')
     } catch {
       setStatus('error')
-      setError('Something went wrong. Please try again.')
+      setError('Something went wrong. Please try again in a moment.')
     }
   }
 

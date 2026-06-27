@@ -41,8 +41,14 @@ docs/
   poily-marketing-copy.md   Source-of-truth page copy
 ```
 
+## Waitlist
+
+The waitlist form posts to [Netlify Forms](https://docs.netlify.com/forms/setup/).
+The form is registered at build time via [`public/__forms.html`](public/__forms.html)
+and submitted from [`src/components/WaitlistForm.tsx`](src/components/WaitlistForm.tsx).
+Submissions appear under **Forms → waitlist** in the Netlify dashboard. (Local
+`next dev` can't accept the POST, so the form only works on a deployed Netlify site.)
+
 ## TODO before launch
 
-- Wire `WaitlistForm` submit to a real endpoint (see the `TODO` in
-  [`src/components/WaitlistForm.tsx`](src/components/WaitlistForm.tsx)).
 - Add an Open Graph share image.
