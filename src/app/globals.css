@@ -1,0 +1,95 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --font-plus-jakarta: 'Plus Jakarta Sans', system-ui, sans-serif;
+  --font-dm-sans: 'DM Sans', system-ui, sans-serif;
+}
+
+@layer base {
+  html {
+    scroll-behavior: smooth;
+    scroll-padding-top: 5.5rem; /* clears the fixed nav on anchor jumps */
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  body {
+    background-color: #FAF8F4;
+    color: #1A1430;
+    font-family: var(--font-dm-sans);
+    overflow-x: hidden;
+  }
+
+  ::selection {
+    background-color: rgba(80, 54, 176, 0.18);
+    color: #1A1430;
+  }
+
+  /* One coherent focus treatment across the whole page */
+  :focus-visible {
+    outline: 2px solid #7C3AED;
+    outline-offset: 2px;
+    border-radius: 4px;
+  }
+}
+
+@layer utilities {
+  .tabular {
+    font-variant-numeric: tabular-nums;
+    font-feature-settings: 'tnum';
+  }
+
+  /* Hairline grid used behind the hero motif — structural, not decorative noise */
+  .grid-lines {
+    background-image:
+      linear-gradient(to right, rgba(80, 54, 176, 0.06) 1px, transparent 1px),
+      linear-gradient(to bottom, rgba(80, 54, 176, 0.06) 1px, transparent 1px);
+    background-size: 28px 28px;
+  }
+}
+
+/* ── Scroll reveal ──────────────────────────────────────────────── */
+.reveal {
+  opacity: 0;
+  transform: translateY(20px);
+  transition: opacity 0.7s cubic-bezier(0.22, 1, 0.36, 1),
+              transform 0.7s cubic-bezier(0.22, 1, 0.36, 1);
+  will-change: opacity, transform;
+}
+.reveal.visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+.reveal-d1 { transition-delay: 0.08s; }
+.reveal-d2 { transition-delay: 0.16s; }
+.reveal-d3 { transition-delay: 0.24s; }
+.reveal-d4 { transition-delay: 0.32s; }
+
+/* ── Signature motif: a token traveling the closed attribution loop ── */
+@keyframes flow-dash {
+  to { stroke-dashoffset: -16; }
+}
+.flow-path {
+  stroke-dasharray: 5 11;
+  animation: flow-dash 1.1s linear infinite;
+}
+
+@keyframes soft-pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.45; }
+}
+.live-dot { animation: soft-pulse 2.4s ease-in-out infinite; }
+
+/* Respect reduced-motion: keep meaning, drop the movement */
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+  .reveal {
+    opacity: 1;
+    transform: none;
+    transition: none;
+  }
+  .flow-path { animation: none; }
+  .live-dot { animation: none; }
+}
