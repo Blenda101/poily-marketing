@@ -1,11 +1,13 @@
 'use client'
 
+import Image from 'next/image'
 import Link from 'next/link'
 import { useEffect, useState } from 'react'
 
 const links = [
   { label: 'Channels', href: '#channels' },
   { label: 'Platform', href: '#platform' },
+  { label: 'How it works', href: '#how-it-works' },
 ]
 
 export default function SiteNav() {
@@ -95,15 +97,19 @@ export default function SiteNav() {
   )
 }
 
-/* Bespoke wordmark — a violet aperture mark + Poily, not a generic "P in a box" */
+/* Brand mark + Poily wordmark */
 function Wordmark() {
   return (
-    <span className="flex items-center gap-2.5">
-      <svg width="26" height="26" viewBox="0 0 26 26" fill="none" aria-hidden="true">
-        <rect width="26" height="26" rx="8" fill="#5036b0" />
-        <circle cx="13" cy="13" r="6.5" stroke="white" strokeWidth="2.2" />
-        <circle cx="13" cy="13" r="2.1" fill="#C9BBF2" />
-      </svg>
+    <span className="flex items-center gap-2">
+      <Image
+        src="/poily-logo.svg"
+        alt=""
+        width={300}
+        height={218}
+        priority
+        unoptimized
+        className="h-7 w-auto"
+      />
       <span className="font-display text-[21px] font-extrabold tracking-tight text-ink leading-none">
         Poily
       </span>

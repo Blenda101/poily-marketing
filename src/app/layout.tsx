@@ -26,7 +26,10 @@ export const metadata: Metadata = {
   title: 'Poily — The HubSpot for SaaS',
   description,
   icons: {
-    icon: '/favicon.svg',
+    icon: [
+      { url: '/poily-logo.svg', type: 'image/svg+xml' },
+      { url: '/poily-logo.png' },
+    ],
   },
   openGraph: {
     title: 'Poily — The HubSpot for SaaS',

@@ -9,12 +9,16 @@ import {
   Zap,
   Users,
   BarChart3,
-  Globe,
+  Handshake,
   ArrowRight,
 } from 'lucide-react'
 import type { LucideIcon } from 'lucide-react'
+import Image from 'next/image'
 import SiteNav from '@/components/SiteNav'
 import HeroMotif from '@/components/HeroMotif'
+import HowItWorks from '@/components/HowItWorks'
+import CreationIntelligence from '@/components/CreationIntelligence'
+import Intelligence from '@/components/Intelligence'
 import WaitlistForm from '@/components/WaitlistForm'
 import ScrollReveal from '@/components/ScrollReveal'
 
@@ -58,7 +62,7 @@ export default function HomePage() {
                   <ArrowRight size={18} strokeWidth={2.4} />
                 </a>
                 <a
-                  href="#platform"
+                  href="#how-it-works"
                   className="group inline-flex items-center gap-1.5 text-[15px] font-medium text-ink-soft hover:text-ink transition-colors">
                   See how it works
                   <span className="transition-transform group-hover:translate-x-0.5">→</span>
@@ -70,7 +74,7 @@ export default function HomePage() {
               {/* channel breadth — a hint, not fake logos */}
               <div className="mt-9 pt-6 border-t border-line">
                 <p className="text-[11px] font-semibold tracking-[0.14em] uppercase text-ink-faint mb-3">
-                  Five channels, one workspace
+                  Six channels, one workspace
                 </p>
                 <div className="flex flex-wrap gap-x-5 gap-y-2.5">
                   {[
@@ -79,6 +83,7 @@ export default function HomePage() {
                     { icon: Share2, label: 'Social' },
                     { icon: FileText, label: 'Content & SEO' },
                     { icon: Megaphone, label: 'Ads' },
+                    { icon: Handshake, label: 'Affiliate' },
                   ].map(({ icon: Icon, label }) => (
                     <span key={label} className="inline-flex items-center gap-2 text-[13px] text-ink-soft">
                       <Icon size={15} strokeWidth={2} className="text-brand" />
@@ -112,29 +117,24 @@ export default function HomePage() {
               </p>
             </div>
 
-            <div className="mt-12 grid lg:grid-cols-6 gap-4 reveal reveal-d1">
-              {/* Email — wide */}
-              <ChannelTile className="lg:col-span-3" icon={Mail} title="Email">
+            <div className="mt-12 grid sm:grid-cols-2 lg:grid-cols-3 gap-4 reveal reveal-d1">
+              <ChannelTile icon={Mail} title="Email">
                 Campaigns and lifecycle sequences that convert.
-                <SequenceMotif />
               </ChannelTile>
-
-              {/* Pages & forms — wide */}
-              <ChannelTile className="lg:col-span-3" icon={LayoutTemplate} title="Landing pages & forms">
+              <ChannelTile icon={LayoutTemplate} title="Landing pages & forms">
                 On-brand pages and conversational forms, hosted on your own domain.
-                <DomainMotif />
               </ChannelTile>
-
-              {/* three supporting */}
-              <ChannelTile className="lg:col-span-2" icon={Share2} title="Social media">
+              <ChannelTile icon={Share2} title="Social media">
                 Plan, schedule, and publish across your social presence.
               </ChannelTile>
-              <ChannelTile className="lg:col-span-2" icon={FileText} title="Content & SEO">
+              <ChannelTile icon={FileText} title="Content & SEO">
                 Publish content built to rank, from one CMS.
               </ChannelTile>
-              <ChannelTile className="lg:col-span-2" icon={Megaphone} title="Digital advertising">
-                Paid search and social, with audiences synced to Google, Meta, and LinkedIn — and ROAS
-                you can see.
+              <ChannelTile icon={Megaphone} title="Digital advertising">
+                Paid search and social, with audiences synced to Google, Meta, and LinkedIn — and ROAS you can see.
+              </ChannelTile>
+              <ChannelTile icon={Handshake} title="Affiliate & influencer">
+                Recruit partners and creators, share trackable links, and pay out on the subscriptions they actually drive.
               </ChannelTile>
             </div>
           </div>
@@ -199,6 +199,13 @@ export default function HomePage() {
           </div>
         </section>
 
+        {/* ─────────────────── How it works ─────────────────── */}
+        <HowItWorks />
+
+        {/* ───────── Poily Intelligence — make (Creation) + decide (Actionable) ───────── */}
+        <CreationIntelligence />
+        <Intelligence />
+
         {/* ───────────────────── Closing CTA ───────────────────── */}
         <section id="waitlist" className="relative bg-dark overflow-hidden">
           <div aria-hidden className="absolute inset-0 grid-lines opacity-[0.4]" />
@@ -230,11 +237,10 @@ export default function HomePage() {
           <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-8">
             <div className="max-w-md">
               <div className="flex items-center gap-2.5">
-                <svg width="24" height="24" viewBox="0 0 26 26" fill="none" aria-hidden="true">
-                  <rect width="26" height="26" rx="8" fill="#5036b0" />
-                  <circle cx="13" cy="13" r="6.5" stroke="white" strokeWidth="2.2" />
-                  <circle cx="13" cy="13" r="2.1" fill="#C9BBF2" />
-                </svg>
+                {/* white chip so the violet mark stays crisp on the dark footer */}
+                <span className="flex h-7 w-7 items-center justify-center rounded-lg bg-white">
+                  <Image src="/poily-logo.svg" alt="" width={300} height={218} unoptimized className="h-4 w-auto" />
+                </span>
                 <span className="font-display text-lg font-extrabold tracking-tight text-white">Poily</span>
               </div>
               <p className="mt-3 text-sm leading-relaxed text-white/45">
@@ -280,8 +286,8 @@ function ChannelTile({
 }) {
   return (
     <div
-      className={`group relative rounded-tile bg-white border border-line p-6 shadow-tile transition-all duration-300 hover:-translate-y-1 hover:shadow-tile-lg ${className}`}>
-      <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-brand-tint text-brand">
+      className={`group relative h-full rounded-tile bg-white border border-line p-6 shadow-tile transition-all duration-300 hover:-translate-y-1 hover:shadow-tile-lg ${className}`}>
+      <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-brand-tint text-brand transition-colors duration-300 group-hover:bg-brand group-hover:text-white">
         <Icon size={20} strokeWidth={2} />
       </div>
       <h3 className="mt-4 font-display text-[19px] font-bold text-ink">{title}</h3>
@@ -350,34 +356,6 @@ function SmallCapability({
 }
 
 /* ── In-tile motifs (illustrative) ── */
-
-function SequenceMotif() {
-  return (
-    <div className="mt-5 flex items-center gap-2" aria-hidden="true">
-      {['Welcome', 'Nudge', 'Convert'].map((step, i) => (
-        <div key={step} className="flex items-center gap-2">
-          <span className="text-[11px] font-medium text-ink-soft bg-cream border border-line rounded-md px-2.5 py-1.5">
-            {step}
-          </span>
-          {i < 2 && <span className="text-brand-accent text-xs">→</span>}
-        </div>
-      ))}
-    </div>
-  )
-}
-
-function DomainMotif() {
-  return (
-    <div className="mt-5 flex items-center gap-2 rounded-lg border border-line bg-cream px-3 py-2" aria-hidden="true">
-      <Globe size={15} strokeWidth={2} className="text-brand shrink-0" />
-      <span className="text-[12px] text-ink-soft">go.</span>
-      <span className="text-[12px] font-semibold text-ink">acme.com</span>
-      <span className="ml-auto text-[10px] font-semibold text-emerald-600 bg-emerald-50 rounded px-1.5 py-0.5">
-        SSL
-      </span>
-    </div>
-  )
-}
 
 function PlanMotif() {
   return (
