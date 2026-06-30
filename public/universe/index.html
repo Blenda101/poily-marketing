@@ -60,7 +60,8 @@
   }
   .legend .item:hover { background: rgba(255,255,255,0.06); opacity: 1; }
   .legend .item.dim { opacity: .35; }
-  .legend .dot { width: 11px; height: 11px; border-radius: 50%; flex: none; box-shadow: 0 0 10px currentColor; }
+  .lgrid { display: grid; grid-template-columns: 1fr 1fr; gap: 9px 16px; }
+  .legend .pin { width: 14px; height: 18px; flex: none; filter: drop-shadow(0 0 4px currentColor); }
 
   /* ---- Hint footer ---- */
   .hint {
@@ -146,13 +147,13 @@
     .title { top: 14px; }
     /* legend moves off the title to a centered pill row near the bottom */
     .legend {
-      top: auto; bottom: 60px; left: 50%; right: auto;
+      top: auto; bottom: 58px; left: 50%; right: auto;
       transform: translateX(-50%);
-      flex-direction: row; flex-wrap: wrap; justify-content: center;
-      gap: 7px 14px; padding: 10px 14px; max-width: 94vw;
+      padding: 12px 18px; max-width: 94vw;
     }
     .legend .lhead { display: none; }
-    .legend .item { font-size: 12px; padding: 4px 8px; margin: 0; }
+    .lgrid { gap: 9px 18px; }
+    .legend .item { font-size: 12.5px; }
     .hint { bottom: 20px; font-size: 11px; padding: 0 14px; }
 
     /* detail panel becomes a bottom sheet on phones (keeps the map visible above) */
@@ -179,7 +180,7 @@
 
 <div class="title" id="title">
   <h1>The Poily Universe</h1>
-  <p>One control plane · three products · every experience they power</p>
+  <p>Poily stands for Points of Interest</p>
 </div>
 
 <div class="legend" id="legend"></div>
@@ -659,16 +660,19 @@ function fade(show) {
 /* ---------- Legend ---------- */
 const legendEl = document.getElementById('legend');
 legendEl.innerHTML = '<div class="lhead">Product Families</div>';
+const lgrid = document.createElement('div'); lgrid.className = 'lgrid';
+const pinSVG = (c) => `<svg class="pin" viewBox="0 0 24 24" style="color:${c}" aria-hidden="true"><path fill="currentColor" d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5a2.5 2.5 0 1 1 0-5 2.5 2.5 0 0 1 0 5z"/></svg>`;
 LEGEND.forEach(l => {
   const item = document.createElement('div'); item.className = 'item'; item.dataset.cluster = l.cluster;
-  item.innerHTML = `<span class="dot" style="color:${l.color};background:${l.color}"></span>${l.label}`;
+  item.innerHTML = `${pinSVG(l.color)}<span>${l.label}</span>`;
   item.addEventListener('click', () => {
     filterCluster = (filterCluster === l.cluster) ? null : l.cluster;
     [...legendEl.querySelectorAll('.item')].forEach(it =>
       it.classList.toggle('dim', filterCluster && it.dataset.cluster !== filterCluster));
   });
-  legendEl.appendChild(item);
+  lgrid.appendChild(item);
 });
+legendEl.appendChild(lgrid);
 
 /* ---------- Main loop ---------- */
 let last = 0;
