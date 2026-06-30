@@ -41,6 +41,34 @@
     color: var(--muted); letter-spacing: .04em;
   }
 
+  /* ---- Guided tour button + controls (live in the title block) ---- */
+  .tour-start, .tour-controls { pointer-events: auto; margin-top: 16px; }
+  .tour-start[hidden], .tour-controls[hidden] { display: none; }
+  .tour-start {
+    cursor: pointer; display: inline-flex; align-items: center;
+    padding: 10px 20px; border-radius: 24px;
+    font-size: 14px; font-weight: 600; color: #fff;
+    background: linear-gradient(120deg, #5036b0, #7C3AED);
+    border: 1px solid rgba(255,255,255,0.18);
+    box-shadow: 0 8px 24px rgba(80,54,176,0.45);
+    transition: transform .15s, filter .15s;
+  }
+  .tour-start:hover { transform: translateY(-2px); filter: brightness(1.1); }
+  .tour-controls {
+    display: inline-flex; align-items: center; gap: 6px;
+    padding: 6px 9px; border-radius: 26px;
+    background: rgba(20,14,34,0.7); border: 1px solid rgba(255,255,255,0.12);
+    backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
+  }
+  .tour-controls button {
+    width: 34px; height: 34px; border-radius: 50%; border: none; cursor: pointer;
+    background: rgba(255,255,255,0.08); color: #ECE9F5; font-size: 13px;
+    display: inline-flex; align-items: center; justify-content: center;
+    transition: background .15s;
+  }
+  .tour-controls button:hover { background: rgba(255,255,255,0.2); }
+  #tour-progress { font-size: 12px; color: var(--muted); min-width: 44px; text-align: center; letter-spacing: .04em; }
+
   /* ---- Legend ---- */
   .legend {
     position: fixed; top: 22px; left: 22px; z-index: 6;
@@ -60,7 +88,8 @@
   }
   .legend .item:hover { background: rgba(255,255,255,0.06); opacity: 1; }
   .legend .item.dim { opacity: .35; }
-  .legend .dot { width: 11px; height: 11px; border-radius: 50%; flex: none; box-shadow: 0 0 10px currentColor; }
+  .lgrid { display: grid; grid-template-columns: 1fr 1fr; gap: 9px 24px; }
+  .legend .pin { width: 14px; height: 18px; flex: none; filter: drop-shadow(0 0 4px currentColor); }
 
   /* ---- Hint footer ---- */
   .hint {
@@ -95,6 +124,7 @@
     box-shadow: -30px 0 60px rgba(0,0,0,0.45);
   }
   .panel.open { transform: translateX(0); }
+  .sheet-handle { display: none; width: 40px; height: 4px; border-radius: 4px; background: rgba(255,255,255,0.28); margin: 9px auto 2px; flex: none; touch-action: none; }
   .panel .accent { height: 5px; width: 100%; flex: none; }
   .panel .pbody { padding: 26px 26px 30px; overflow-y: auto; }
   .panel .close {
@@ -142,8 +172,32 @@
   .panel .rel .rkind { font-size: 11px; color: var(--muted); margin-left: auto; }
 
   @media (max-width: 560px) {
-    .legend { transform: scale(.9); transform-origin: top left; }
     .title { top: 14px; }
+    /* legend moves off the title to a centered pill row near the bottom */
+    .legend {
+      top: auto; bottom: 58px; left: 50%; right: auto;
+      transform: translateX(-50%);
+      padding: 12px 18px; max-width: 94vw;
+    }
+    .legend .lhead { display: none; }
+    .lgrid { gap: 9px 26px; }
+    .legend .item { font-size: 12.5px; }
+    .hint { bottom: 20px; font-size: 11px; padding: 0 14px; }
+
+    /* detail panel becomes a bottom sheet on phones (keeps the map visible above) */
+    .panel {
+      width: 100%; max-width: 100%; top: auto; bottom: 0;
+      height: auto; max-height: 80vh;
+      border-left: none; border-top: 1px solid rgba(255,255,255,0.1);
+      border-radius: 18px 18px 0 0;
+      transform: translateY(100%);
+      box-shadow: 0 -22px 48px rgba(0,0,0,0.5);
+    }
+    .panel.open { transform: translateY(0); }
+    .sheet-handle { display: block; }
+    .panel .accent { border-radius: 0; }
+    .panel .close { top: 10px; }
+    .panel .pbody { flex: 1 1 auto; min-height: 0; padding-top: 10px; }
   }
 </style>
 </head>
@@ -154,7 +208,15 @@
 
 <div class="title" id="title">
   <h1>The Poily Universe</h1>
-  <p>One control plane · three products · every experience they power</p>
+  <p>Every product in the Poily orbit — explore them all</p>
+  <button class="tour-start" id="tour-start">▶&nbsp;&nbsp;Take the tour</button>
+  <div class="tour-controls" id="tour-controls" hidden>
+    <button id="tour-prev" title="Previous">⏮</button>
+    <button id="tour-toggle" title="Pause">⏸</button>
+    <span id="tour-progress">1 / 9</span>
+    <button id="tour-next" title="Next">⏭</button>
+    <button id="tour-exit" title="Exit tour">✕</button>
+  </div>
 </div>
 
 <div class="legend" id="legend"></div>
@@ -169,6 +231,7 @@
 </div>
 
 <aside class="panel" id="panel" aria-hidden="true">
+  <div class="sheet-handle" id="sheet-handle"></div>
   <div class="accent" id="p-accent"></div>
   <button class="close" id="p-close" aria-label="Close">×</button>
   <div class="pbody">
@@ -276,7 +339,7 @@ const PLANETS = [
 ];
 
 const LEGEND = [
-  { cluster: 'platform', label: 'Poily — control plane', color: '#8B5CF6' },
+  { cluster: 'platform', label: 'Poily', color: '#8B5CF6' },
   { cluster: 'doerfy', label: 'Doerfy', color: '#7C5CFF' },
   { cluster: 'bigtopa', label: 'BigTopa', color: '#FF7A35' },
   { cluster: 'goalgauntlet', label: 'GoalGauntlet', color: '#F97316' }
@@ -302,6 +365,7 @@ const canvas = document.getElementById('sky');
 const ctx = canvas.getContext('2d');
 let W = 0, H = 0, DPR = 1, cx = 0, cy = 0, scale = 1;
 let viewOffsetX = 0, targetOffsetX = 0;
+let viewOffsetY = 0, targetOffsetY = 0;   // mobile: lift the system above the bottom sheet
 
 function resize() {
   DPR = Math.min(window.devicePixelRatio || 1, 2);
@@ -346,6 +410,7 @@ let hovered = null;
 let selected = null;
 let filterCluster = null;
 let motionFactor = 1;            // eases to 0 while hovering / panel open, so orbits hold still to click
+let inTour = false;              // guided Explore tour active
 const mouse = { x: -1, y: -1, inside: false };
 
 const ease = (a, b, k) => a + (b - a) * k;
@@ -357,14 +422,14 @@ function updatePositions(dt) {
   for (const p of PLANETS) {
     p.angle += p.speed * dt * motionFactor;
     p.x = cx + viewOffsetX + Math.cos(p.angle) * PLANET_ORBIT * scale;
-    p.y = cy + Math.sin(p.angle) * PLANET_ORBIT * scale;
+    p.y = cy + viewOffsetY + Math.sin(p.angle) * PLANET_ORBIT * scale;
     for (const c of p.kids) {
       c.a += c.speed * MOON_SPEED_SCALE * dt * motionFactor;
       c.x = p.x + Math.cos(c.a) * MOON_ORBIT * scale;
       c.y = p.y + Math.sin(c.a) * MOON_ORBIT * scale;
     }
   }
-  SUN.x = cx + viewOffsetX; SUN.y = cy;
+  SUN.x = cx + viewOffsetX; SUN.y = cy + viewOffsetY;
   // ease highlight per node
   for (const n of NODES) {
     const want = focusAlpha(n);
@@ -416,7 +481,7 @@ function draw() {
   ctx.save();
   ctx.strokeStyle = 'rgba(160,140,220,0.14)';
   ctx.lineWidth = 1; ctx.setLineDash([2, 7]);
-  ctx.beginPath(); ctx.arc(cx + viewOffsetX, cy, PLANET_ORBIT * scale, 0, 7); ctx.stroke();
+  ctx.beginPath(); ctx.arc(cx + viewOffsetX, cy + viewOffsetY, PLANET_ORBIT * scale, 0, 7); ctx.stroke();
   ctx.setLineDash([]);
   ctx.restore();
 
@@ -543,7 +608,11 @@ canvas.addEventListener('mousemove', e => {
 canvas.addEventListener('mouseleave', () => { hovered = null; mouse.inside = false; hideTooltip(); });
 canvas.addEventListener('click', e => {
   const hit = hitTest(e.clientX, e.clientY);
-  if (hit) selectNode(hit); else deselect();
+  if (inTour) tourPause();              // any manual interaction pauses the tour
+  if (hit) {
+    selectNode(hit);
+    if (inTour) setTourIndex(TOUR.indexOf(hit.id));
+  } else deselect();
 });
 
 const tooltip = document.getElementById('tooltip');
@@ -560,7 +629,19 @@ function hideTooltip() { tooltip.style.opacity = '0'; }
 const panel = document.getElementById('panel');
 function selectNode(n) {
   selected = n; hideTooltip();
-  targetOffsetX = -(Math.min(380, window.innerWidth * 0.92)) / 2.4;
+  const mobile = window.matchMedia('(max-width: 560px)').matches;
+  const pw = Math.min(380, window.innerWidth * 0.92);
+  if (inTour && !mobile) {
+    // tour on desktop: fly/pan so this POI sits centred in the area beside the panel
+    const focalX = (window.innerWidth - pw) / 2, focalY = window.innerHeight / 2;
+    targetOffsetX = viewOffsetX + (focalX - n.x);
+    targetOffsetY = viewOffsetY + (focalY - n.y);
+  } else if (mobile) {
+    // bottom sheet: don't shift sideways, lift the system up so the node clears the sheet
+    targetOffsetX = 0; targetOffsetY = -(window.innerHeight * 0.20);
+  } else {
+    targetOffsetX = -pw / 2.4; targetOffsetY = 0;
+  }
 
   document.getElementById('p-accent').style.background =
     `linear-gradient(90deg, ${n.color}, ${n.glow})`;
@@ -613,12 +694,14 @@ function selectNode(n) {
   fade(false);
 }
 function deselect() {
-  selected = null; targetOffsetX = 0;
+  selected = null; targetOffsetX = 0; targetOffsetY = 0;
   panel.classList.remove('open'); panel.setAttribute('aria-hidden', 'true');
   fade(true);
 }
 document.getElementById('p-close').addEventListener('click', deselect);
-window.addEventListener('keydown', e => { if (e.key === 'Escape') deselect(); });
+window.addEventListener('keydown', e => {
+  if (e.key === 'Escape') { if (inTour) tourStop(); else deselect(); }
+});
 
 function fade(show) {
   document.getElementById('hint').style.opacity = show ? '1' : '0';
@@ -626,26 +709,94 @@ function fade(show) {
 
 /* ---------- Legend ---------- */
 const legendEl = document.getElementById('legend');
-legendEl.innerHTML = '<div class="lhead">Products</div>';
+legendEl.innerHTML = '<div class="lhead">Product Families</div>';
+const lgrid = document.createElement('div'); lgrid.className = 'lgrid';
+const pinSVG = (c) => `<svg class="pin" viewBox="0 0 24 24" style="color:${c}" aria-hidden="true"><path fill="currentColor" d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5a2.5 2.5 0 1 1 0-5 2.5 2.5 0 0 1 0 5z"/></svg>`;
 LEGEND.forEach(l => {
   const item = document.createElement('div'); item.className = 'item'; item.dataset.cluster = l.cluster;
-  item.innerHTML = `<span class="dot" style="color:${l.color};background:${l.color}"></span>${l.label}`;
+  item.innerHTML = `${pinSVG(l.color)}<span>${l.label}</span>`;
   item.addEventListener('click', () => {
     filterCluster = (filterCluster === l.cluster) ? null : l.cluster;
     [...legendEl.querySelectorAll('.item')].forEach(it =>
       it.classList.toggle('dim', filterCluster && it.dataset.cluster !== filterCluster));
   });
-  legendEl.appendChild(item);
+  lgrid.appendChild(item);
 });
+legendEl.appendChild(lgrid);
 
 /* ---------- Main loop ---------- */
 let last = 0;
 function loop(now) {
   const dt = Math.min(now - last, 60); last = now; t = now;
   viewOffsetX = ease(viewOffsetX, targetOffsetX, 0.08);
+  viewOffsetY = ease(viewOffsetY, targetOffsetY, 0.08);
   updatePositions(dt);
   draw();
   requestAnimationFrame(loop);
+}
+
+/* ---------- Guided "Explore" tour ---------- */
+const TOUR = ['poily', 'doerfy', 'wheel', 'elephant', 'bigtopa', 'greekhouse', 'gatheragain', 'alumnihub', 'goalgauntlet'];
+const TOUR_MS = 4800;
+let tourIndex = -1, tourTimer = null, tourPlaying = false;
+
+const elTourStart = document.getElementById('tour-start');
+const elTourCtl = document.getElementById('tour-controls');
+const elTourProg = document.getElementById('tour-progress');
+const elTourToggle = document.getElementById('tour-toggle');
+
+function setTourIndex(i) { if (i < 0) return; tourIndex = i; elTourProg.textContent = (i + 1) + ' / ' + TOUR.length; }
+function tourToggleIcon() { elTourToggle.textContent = tourPlaying ? '⏸' : '▶'; elTourToggle.title = tourPlaying ? 'Pause' : 'Play'; }
+function scheduleTourAdvance() {
+  clearTimeout(tourTimer);
+  if (!tourPlaying) return;
+  tourTimer = setTimeout(() => {
+    if (tourIndex < TOUR.length - 1) tourGoto(tourIndex + 1); else tourStop();
+  }, TOUR_MS);
+}
+function tourGoto(i) {
+  if (i < 0 || i >= TOUR.length) return;
+  setTourIndex(i);
+  selectNode(byId[TOUR[i]]);
+  scheduleTourAdvance();
+}
+function tourPause() { tourPlaying = false; clearTimeout(tourTimer); tourToggleIcon(); }
+function tourStart() {
+  inTour = true; tourPlaying = true;
+  elTourStart.hidden = true; elTourCtl.hidden = false;
+  tourToggleIcon(); tourGoto(0);
+}
+function tourStop() {
+  inTour = false; tourPlaying = false; clearTimeout(tourTimer); tourIndex = -1;
+  elTourStart.hidden = false; elTourCtl.hidden = true;
+  deselect();
+}
+elTourStart.addEventListener('click', tourStart);
+elTourToggle.addEventListener('click', () => {
+  tourPlaying = !tourPlaying; tourToggleIcon();
+  if (tourPlaying) scheduleTourAdvance(); else clearTimeout(tourTimer);
+});
+document.getElementById('tour-prev').addEventListener('click', () => tourGoto(Math.max(0, tourIndex - 1)));
+document.getElementById('tour-next').addEventListener('click', () => {
+  if (tourIndex < TOUR.length - 1) tourGoto(tourIndex + 1); else tourStop();
+});
+document.getElementById('tour-exit').addEventListener('click', tourStop);
+
+// bottom-sheet: drag the handle down to dismiss
+(() => {
+  const handle = document.getElementById('sheet-handle');
+  let startY = null;
+  handle.addEventListener('touchstart', e => { startY = e.touches[0].clientY; }, { passive: true });
+  handle.addEventListener('touchmove', e => {
+    if (startY != null && e.touches[0].clientY - startY > 55) { deselect(); startY = null; }
+  }, { passive: true });
+  handle.addEventListener('touchend', () => { startY = null; });
+})();
+
+// touch devices have no hover — tell them to tap, and reword the hint accordingly
+const isTouch = window.matchMedia('(hover: none), (pointer: coarse)').matches;
+if (isTouch) {
+  document.getElementById('hint').innerHTML = '<b>Tap</b> a product to open its overview panel';
 }
 
 resize();
