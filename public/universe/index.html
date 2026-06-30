@@ -41,6 +41,34 @@
     color: var(--muted); letter-spacing: .04em;
   }
 
+  /* ---- Guided tour button + controls (live in the title block) ---- */
+  .tour-start, .tour-controls { pointer-events: auto; margin-top: 16px; }
+  .tour-start[hidden], .tour-controls[hidden] { display: none; }
+  .tour-start {
+    cursor: pointer; display: inline-flex; align-items: center;
+    padding: 10px 20px; border-radius: 24px;
+    font-size: 14px; font-weight: 600; color: #fff;
+    background: linear-gradient(120deg, #5036b0, #7C3AED);
+    border: 1px solid rgba(255,255,255,0.18);
+    box-shadow: 0 8px 24px rgba(80,54,176,0.45);
+    transition: transform .15s, filter .15s;
+  }
+  .tour-start:hover { transform: translateY(-2px); filter: brightness(1.1); }
+  .tour-controls {
+    display: inline-flex; align-items: center; gap: 6px;
+    padding: 6px 9px; border-radius: 26px;
+    background: rgba(20,14,34,0.7); border: 1px solid rgba(255,255,255,0.12);
+    backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
+  }
+  .tour-controls button {
+    width: 34px; height: 34px; border-radius: 50%; border: none; cursor: pointer;
+    background: rgba(255,255,255,0.08); color: #ECE9F5; font-size: 13px;
+    display: inline-flex; align-items: center; justify-content: center;
+    transition: background .15s;
+  }
+  .tour-controls button:hover { background: rgba(255,255,255,0.2); }
+  #tour-progress { font-size: 12px; color: var(--muted); min-width: 44px; text-align: center; letter-spacing: .04em; }
+
   /* ---- Legend ---- */
   .legend {
     position: fixed; top: 22px; left: 22px; z-index: 6;
@@ -181,6 +209,14 @@
 <div class="title" id="title">
   <h1>The Poily Universe</h1>
   <p>Poily stands for Points of Interest</p>
+  <button class="tour-start" id="tour-start">▶&nbsp;&nbsp;Take the tour</button>
+  <div class="tour-controls" id="tour-controls" hidden>
+    <button id="tour-prev" title="Previous">⏮</button>
+    <button id="tour-toggle" title="Pause">⏸</button>
+    <span id="tour-progress">1 / 9</span>
+    <button id="tour-next" title="Next">⏭</button>
+    <button id="tour-exit" title="Exit tour">✕</button>
+  </div>
 </div>
 
 <div class="legend" id="legend"></div>
@@ -374,6 +410,7 @@ let hovered = null;
 let selected = null;
 let filterCluster = null;
 let motionFactor = 1;            // eases to 0 while hovering / panel open, so orbits hold still to click
+let inTour = false;              // guided Explore tour active
 const mouse = { x: -1, y: -1, inside: false };
 
 const ease = (a, b, k) => a + (b - a) * k;
@@ -571,7 +608,11 @@ canvas.addEventListener('mousemove', e => {
 canvas.addEventListener('mouseleave', () => { hovered = null; mouse.inside = false; hideTooltip(); });
 canvas.addEventListener('click', e => {
   const hit = hitTest(e.clientX, e.clientY);
-  if (hit) selectNode(hit); else deselect();
+  if (inTour) tourPause();              // any manual interaction pauses the tour
+  if (hit) {
+    selectNode(hit);
+    if (inTour) setTourIndex(TOUR.indexOf(hit.id));
+  } else deselect();
 });
 
 const tooltip = document.getElementById('tooltip');
@@ -588,11 +629,18 @@ function hideTooltip() { tooltip.style.opacity = '0'; }
 const panel = document.getElementById('panel');
 function selectNode(n) {
   selected = n; hideTooltip();
-  if (window.matchMedia('(max-width: 560px)').matches) {
+  const mobile = window.matchMedia('(max-width: 560px)').matches;
+  const pw = Math.min(380, window.innerWidth * 0.92);
+  if (inTour && !mobile) {
+    // tour on desktop: fly/pan so this POI sits centred in the area beside the panel
+    const focalX = (window.innerWidth - pw) / 2, focalY = window.innerHeight / 2;
+    targetOffsetX = viewOffsetX + (focalX - n.x);
+    targetOffsetY = viewOffsetY + (focalY - n.y);
+  } else if (mobile) {
     // bottom sheet: don't shift sideways, lift the system up so the node clears the sheet
     targetOffsetX = 0; targetOffsetY = -(window.innerHeight * 0.20);
   } else {
-    targetOffsetX = -(Math.min(380, window.innerWidth * 0.92)) / 2.4; targetOffsetY = 0;
+    targetOffsetX = -pw / 2.4; targetOffsetY = 0;
   }
 
   document.getElementById('p-accent').style.background =
@@ -651,7 +699,9 @@ function deselect() {
   fade(true);
 }
 document.getElementById('p-close').addEventListener('click', deselect);
-window.addEventListener('keydown', e => { if (e.key === 'Escape') deselect(); });
+window.addEventListener('keydown', e => {
+  if (e.key === 'Escape') { if (inTour) tourStop(); else deselect(); }
+});
 
 function fade(show) {
   document.getElementById('hint').style.opacity = show ? '1' : '0';
@@ -684,6 +734,53 @@ function loop(now) {
   draw();
   requestAnimationFrame(loop);
 }
+
+/* ---------- Guided "Explore" tour ---------- */
+const TOUR = ['poily', 'doerfy', 'wheel', 'elephant', 'bigtopa', 'greekhouse', 'gatheragain', 'alumnihub', 'goalgauntlet'];
+const TOUR_MS = 4800;
+let tourIndex = -1, tourTimer = null, tourPlaying = false;
+
+const elTourStart = document.getElementById('tour-start');
+const elTourCtl = document.getElementById('tour-controls');
+const elTourProg = document.getElementById('tour-progress');
+const elTourToggle = document.getElementById('tour-toggle');
+
+function setTourIndex(i) { if (i < 0) return; tourIndex = i; elTourProg.textContent = (i + 1) + ' / ' + TOUR.length; }
+function tourToggleIcon() { elTourToggle.textContent = tourPlaying ? '⏸' : '▶'; elTourToggle.title = tourPlaying ? 'Pause' : 'Play'; }
+function scheduleTourAdvance() {
+  clearTimeout(tourTimer);
+  if (!tourPlaying) return;
+  tourTimer = setTimeout(() => {
+    if (tourIndex < TOUR.length - 1) tourGoto(tourIndex + 1); else tourStop();
+  }, TOUR_MS);
+}
+function tourGoto(i) {
+  if (i < 0 || i >= TOUR.length) return;
+  setTourIndex(i);
+  selectNode(byId[TOUR[i]]);
+  scheduleTourAdvance();
+}
+function tourPause() { tourPlaying = false; clearTimeout(tourTimer); tourToggleIcon(); }
+function tourStart() {
+  inTour = true; tourPlaying = true;
+  elTourStart.hidden = true; elTourCtl.hidden = false;
+  tourToggleIcon(); tourGoto(0);
+}
+function tourStop() {
+  inTour = false; tourPlaying = false; clearTimeout(tourTimer); tourIndex = -1;
+  elTourStart.hidden = false; elTourCtl.hidden = true;
+  deselect();
+}
+elTourStart.addEventListener('click', tourStart);
+elTourToggle.addEventListener('click', () => {
+  tourPlaying = !tourPlaying; tourToggleIcon();
+  if (tourPlaying) scheduleTourAdvance(); else clearTimeout(tourTimer);
+});
+document.getElementById('tour-prev').addEventListener('click', () => tourGoto(Math.max(0, tourIndex - 1)));
+document.getElementById('tour-next').addEventListener('click', () => {
+  if (tourIndex < TOUR.length - 1) tourGoto(tourIndex + 1); else tourStop();
+});
+document.getElementById('tour-exit').addEventListener('click', tourStop);
 
 // bottom-sheet: drag the handle down to dismiss
 (() => {
