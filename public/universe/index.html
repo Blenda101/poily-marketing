@@ -1,0 +1,655 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Poily — Product Universe</title>
+<style>
+  :root {
+    --ink: #0a0712;
+    --violet: #7C3AED;
+    --violet-deep: #5036b0;
+    --text: #ECE9F5;
+    --muted: #9A93B4;
+    --panel-w: 380px;
+  }
+  * { box-sizing: border-box; }
+  html, body {
+    margin: 0; height: 100%; overflow: hidden;
+    background: var(--ink);
+    color: var(--text);
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Inter, Roboto, sans-serif;
+    -webkit-font-smoothing: antialiased;
+  }
+  #stage { position: fixed; inset: 0; }
+  canvas { display: block; width: 100%; height: 100%; cursor: grab; }
+
+  /* ---- Title overlay ---- */
+  .title {
+    position: fixed; top: 26px; left: 0; right: 0;
+    text-align: center; pointer-events: none; z-index: 5;
+    transition: opacity .4s ease;
+  }
+  .title h1 {
+    margin: 0; font-size: clamp(20px, 3.4vw, 34px); font-weight: 700;
+    letter-spacing: -0.02em;
+    background: linear-gradient(100deg, #C4B5FD, #fff 40%, #DDD6FE);
+    -webkit-background-clip: text; background-clip: text; color: transparent;
+  }
+  .title p {
+    margin: 6px 0 0; font-size: clamp(11px, 1.5vw, 14px);
+    color: var(--muted); letter-spacing: .04em;
+  }
+
+  /* ---- Legend ---- */
+  .legend {
+    position: fixed; top: 22px; left: 22px; z-index: 6;
+    display: flex; flex-direction: column; gap: 9px;
+    padding: 14px 15px; border-radius: 14px;
+    background: rgba(20, 14, 34, 0.55);
+    border: 1px solid rgba(255,255,255,0.08);
+    backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px);
+  }
+  .legend .lhead { font-size: 10px; letter-spacing: .16em; text-transform: uppercase; color: var(--muted); margin-bottom: 2px; }
+  .legend .item {
+    display: flex; align-items: center; gap: 9px;
+    font-size: 13px; cursor: pointer; opacity: .85;
+    padding: 3px 6px; margin: -3px -6px; border-radius: 8px;
+    transition: background .15s, opacity .15s;
+    user-select: none;
+  }
+  .legend .item:hover { background: rgba(255,255,255,0.06); opacity: 1; }
+  .legend .item.dim { opacity: .35; }
+  .legend .dot { width: 11px; height: 11px; border-radius: 50%; flex: none; box-shadow: 0 0 10px currentColor; }
+
+  /* ---- Hint footer ---- */
+  .hint {
+    position: fixed; bottom: 18px; left: 0; right: 0; text-align: center;
+    font-size: 12px; color: var(--muted); pointer-events: none; z-index: 5;
+    transition: opacity .4s ease;
+  }
+  .hint b { color: #C4B5FD; font-weight: 600; }
+
+  /* ---- Tooltip ---- */
+  .tooltip {
+    position: fixed; z-index: 20; pointer-events: none;
+    padding: 8px 12px; border-radius: 10px; max-width: 240px;
+    background: rgba(16, 10, 28, 0.92);
+    border: 1px solid rgba(255,255,255,0.12);
+    backdrop-filter: blur(8px);
+    transform: translate(-50%, -130%); transition: opacity .12s;
+    opacity: 0; white-space: nowrap;
+  }
+  .tooltip .tt-name { font-size: 13px; font-weight: 600; }
+  .tooltip .tt-tag { font-size: 11px; color: var(--muted); margin-top: 2px; white-space: normal; }
+
+  /* ---- Detail panel ---- */
+  .panel {
+    position: fixed; top: 0; right: 0; height: 100%; width: var(--panel-w);
+    max-width: 92vw; z-index: 15;
+    background: linear-gradient(180deg, rgba(24,16,40,0.92), rgba(12,8,22,0.96));
+    border-left: 1px solid rgba(255,255,255,0.09);
+    backdrop-filter: blur(18px); -webkit-backdrop-filter: blur(18px);
+    transform: translateX(105%); transition: transform .42s cubic-bezier(.22,.9,.3,1);
+    display: flex; flex-direction: column;
+    box-shadow: -30px 0 60px rgba(0,0,0,0.45);
+  }
+  .panel.open { transform: translateX(0); }
+  .panel .accent { height: 5px; width: 100%; flex: none; }
+  .panel .pbody { padding: 26px 26px 30px; overflow-y: auto; }
+  .panel .close {
+    position: absolute; top: 14px; right: 16px; z-index: 2;
+    width: 32px; height: 32px; border-radius: 50%; border: none; cursor: pointer;
+    background: rgba(255,255,255,0.08); color: var(--text); font-size: 17px; line-height: 1;
+    transition: background .15s;
+  }
+  .panel .close:hover { background: rgba(255,255,255,0.18); }
+  .panel .kicker {
+    display: inline-flex; align-items: center; gap: 7px;
+    font-size: 11px; letter-spacing: .14em; text-transform: uppercase;
+    color: var(--muted); margin-bottom: 12px;
+  }
+  .panel .kicker .pdot { width: 9px; height: 9px; border-radius: 50%; box-shadow: 0 0 10px currentColor; }
+  .panel h2 { margin: 0 0 6px; font-size: 27px; font-weight: 700; letter-spacing: -0.02em; }
+  .panel .tag { margin: 0 0 18px; font-size: 15px; color: #C9C2E0; font-style: italic; }
+  .panel .desc { margin: 0 0 20px; font-size: 14px; line-height: 1.6; color: #D7D1E8; }
+  .panel .meta { display: flex; flex-direction: column; gap: 10px; margin-bottom: 24px; }
+  .panel .meta .row { display: flex; align-items: baseline; gap: 10px; font-size: 13px; }
+  .panel .meta .k { color: var(--muted); min-width: 84px; flex: none; font-size: 11px; letter-spacing: .08em; text-transform: uppercase; padding-top: 1px; }
+  .panel .meta .v { color: var(--text); }
+  .panel .chips { display: flex; flex-wrap: wrap; gap: 7px; margin-bottom: 24px; }
+  .panel .chip {
+    font-size: 11px; padding: 4px 10px; border-radius: 20px;
+    background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.1);
+    color: #CFC8E6;
+  }
+  .panel .launch {
+    display: inline-flex; align-items: center; justify-content: center; gap: 9px;
+    width: 100%; padding: 14px; border-radius: 12px; text-decoration: none;
+    font-size: 15px; font-weight: 600; color: #fff; cursor: pointer;
+    transition: transform .15s, filter .15s, box-shadow .15s;
+  }
+  .panel .launch:hover { transform: translateY(-2px); filter: brightness(1.08); }
+  .panel .launch:active { transform: translateY(0); }
+  .panel .relhead { font-size: 11px; letter-spacing: .14em; text-transform: uppercase; color: var(--muted); margin: 4px 0 10px; }
+  .panel .rel {
+    display: flex; align-items: center; gap: 10px; padding: 9px 10px; margin: 0 -10px;
+    border-radius: 10px; cursor: pointer; transition: background .15s;
+  }
+  .panel .rel:hover { background: rgba(255,255,255,0.06); }
+  .panel .rel .rdot { width: 9px; height: 9px; border-radius: 50%; flex: none; box-shadow: 0 0 8px currentColor; }
+  .panel .rel .rname { font-size: 14px; }
+  .panel .rel .rkind { font-size: 11px; color: var(--muted); margin-left: auto; }
+
+  @media (max-width: 560px) {
+    .legend { transform: scale(.9); transform-origin: top left; }
+    .title { top: 14px; }
+  }
+</style>
+</head>
+<body>
+<div id="stage">
+  <canvas id="sky"></canvas>
+</div>
+
+<div class="title" id="title">
+  <h1>The Poily Universe</h1>
+  <p>One control plane · three products · every experience they power</p>
+</div>
+
+<div class="legend" id="legend"></div>
+
+<div class="hint" id="hint">
+  <b>Hover</b> to trace relationships · <b>Click</b> a body for details · launch opens in a new tab
+</div>
+
+<div class="tooltip" id="tooltip">
+  <div class="tt-name"></div>
+  <div class="tt-tag"></div>
+</div>
+
+<aside class="panel" id="panel" aria-hidden="true">
+  <div class="accent" id="p-accent"></div>
+  <button class="close" id="p-close" aria-label="Close">×</button>
+  <div class="pbody">
+    <div class="kicker"><span class="pdot" id="p-pdot"></span><span id="p-kind"></span></div>
+    <h2 id="p-name"></h2>
+    <p class="tag" id="p-tag"></p>
+    <p class="desc" id="p-desc"></p>
+    <div class="chips" id="p-chips"></div>
+    <div class="meta" id="p-meta"></div>
+    <a class="launch" id="p-launch" target="_blank" rel="noopener noreferrer">Open app <span>↗</span></a>
+    <div id="p-relwrap" style="margin-top:26px;">
+      <div class="relhead" id="p-relhead"></div>
+      <div id="p-rels"></div>
+    </div>
+  </div>
+</aside>
+
+<script>
+/* ============================================================================
+   POILY PRODUCT UNIVERSE — interactive constellation
+   ----------------------------------------------------------------------------
+   Single self-contained file. Edit the CONFIG block below to change apps,
+   colors, copy, and (importantly) the launch URLs. URLs marked PLACEHOLDER
+   are best guesses — confirm them.
+   ========================================================================== */
+
+/* ---------- CONFIG: the portfolio graph ---------- */
+const SUN = {
+  id: 'poily', label: 'Poily', cluster: 'platform', kind: 'Control plane',
+  color: '#8B5CF6', glow: '#5036b0',
+  tag: 'The HubSpot for SaaS',
+  desc: 'One control plane for marketing, monetization, and entitlements across every product — operated from a single console.',
+  url: 'https://poily.com',
+  meta: [
+    ['Role', 'Cross-tenant control plane'],
+    ['Owns', 'Plans · entitlements · marketing · connectors']
+  ],
+  chips: ['Marketing', 'Monetization', 'Entitlements', 'AI Creation']
+};
+
+// Planets (tenants) — each orbits the sun. children = moons.
+const PLANETS = [
+  {
+    id: 'doerfy', label: 'Doerfy', cluster: 'doerfy', kind: 'Life-design app',
+    color: '#7C5CFF', glow: '#7C5CFF',
+    tag: 'Design. Visualize. Do.',
+    desc: 'Software built on a framework for life design — connect your vision to your daily work, with Doey, your AI coach.',
+    url: 'https://doerfy.com',
+    meta: [['Lines', 'Personal · Business'], ['AI coach', 'Doey']],
+    chips: ['Life design', 'AI coach', 'Personal', 'Business'],
+    angle: -Math.PI / 2, speed: 0.00018,
+    children: [
+      { id: 'wheel', label: 'Wheel of Life', kind: 'Free tool · by Doerfy', color: '#A78BFA', leadMagnet: true,
+        tag: 'Visualize your life balance, design your growth.',
+        desc: 'A free, standalone life assessment across 8 dimensions — see where you stand at a glance, then take the next step with Doerfy.',
+        url: 'https://mywheeloflife.com/', chips: ['Free tool', '8 dimensions', 'Assessment'],
+        meta: [['By', 'Doerfy'], ['Site', 'mywheeloflife.com'], ['Type', 'Life-balance assessment']],
+        a: 0.4, speed: 0.006 },
+      { id: 'elephant', label: 'Eat an Elephant', kind: 'Free tool · by Doerfy', color: '#C4B5FD', leadMagnet: true,
+        tag: 'How do you eat an elephant? One bite at a time.',
+        desc: 'A free, standalone focus timer that breaks overwhelming tasks into bite-sized sessions — build momentum, then go deeper with Doerfy.',
+        url: 'https://www.eatanelephant.co', chips: ['Free tool', 'Focus timer', 'One bite at a time'],
+        meta: [['By', 'Doerfy'], ['Site', 'eatanelephant.co'], ['Type', 'Focus / task breaking']],
+        a: 2.3, speed: 0.0072 }
+    ]
+  },
+  {
+    id: 'bigtopa', label: 'BigTopa', cluster: 'bigtopa', kind: 'Community platform',
+    color: '#FF7A35', glow: '#E8621A',
+    tag: 'One platform. Every way your organization engages.',
+    desc: 'A community + workspace platform spanning multiple space types — from chapters to reunions to alumni networks.',
+    url: 'https://bigtopa.com',
+    meta: [['Spaces', 'Greekhouse · Gather Again · AlumniHub']],
+    chips: ['Community', 'Workspaces', 'Engagement'],
+    angle: -Math.PI / 2 + (2 * Math.PI / 3), speed: 0.00018,
+    children: [
+      { id: 'greekhouse', label: 'Greekhouse', kind: 'BigTopa space', color: '#B8923A', glow: '#8B2D40',
+        tag: "Your chapter's digital home.",
+        desc: 'The Community space type — a burgundy-and-gold digital home for Greek chapters.',
+        url: 'https://greekhouse.io', chips: ['Community', 'Chapters'], meta: [['Space type', 'Community']],
+        a: 0.7, speed: 0.0068 },
+      { id: 'gatheragain', label: 'Gather Again', kind: 'BigTopa space', color: '#C4713A', glow: '#1A3128',
+        tag: 'Plan the reunion. Stay connected. Your call.',
+        desc: 'The Event space type — plan reunions, then hibernate or keep the group connected.',
+        url: 'https://gatheragain.co', chips: ['Events', 'Reunions'], meta: [['Space type', 'Event']],
+        a: 2.6, speed: 0.0058 },
+      { id: 'alumnihub', label: 'AlumniHub', kind: 'BigTopa space', color: '#C99A2E', glow: '#1A2B4C',
+        tag: 'Nurture your community, grow your givers.',
+        desc: 'A navy-and-gold alumni engagement and giving space.',
+        url: 'https://alumnihub.co', chips: ['Alumni', 'Giving'], meta: [['Space type', 'Alumni']],
+        a: 4.6, speed: 0.0063 }
+    ]
+  },
+  {
+    id: 'goalgauntlet', label: 'GoalGauntlet', cluster: 'goalgauntlet', kind: 'Fitness app',
+    color: '#F97316', glow: '#F97316',
+    tag: 'Fitness challenges with real stakes.',
+    desc: 'Competitive fitness challenges with friends and family where real money is on the line — track with health apps, compete for prize pools.',
+    url: 'https://www.goalgauntlet.com',
+    meta: [['Trust', 'Payments by Stripe']],
+    chips: ['Fitness', 'Real stakes', 'Social'],
+    angle: -Math.PI / 2 + (4 * Math.PI / 3), speed: 0.00018,
+    children: []
+  }
+];
+
+const LEGEND = [
+  { cluster: 'platform', label: 'Poily — control plane', color: '#8B5CF6' },
+  { cluster: 'doerfy', label: 'Doerfy', color: '#7C5CFF' },
+  { cluster: 'bigtopa', label: 'BigTopa', color: '#FF7A35' },
+  { cluster: 'goalgauntlet', label: 'GoalGauntlet', color: '#F97316' }
+];
+
+/* ---------- Build flat node list + index ---------- */
+const NODES = [];
+SUN.role = 'sun'; SUN.x = 0; SUN.y = 0; NODES.push(SUN);
+for (const p of PLANETS) {
+  p.role = 'planet'; p.parent = SUN; NODES.push(p);
+  p.kids = [];
+  for (const c of (p.children || [])) {
+    c.role = 'moon'; c.parent = p; c.cluster = p.cluster;
+    c.glow = c.glow || c.color;
+    if (!c.url) c.url = p.url;
+    NODES.push(c); p.kids.push(c);
+  }
+}
+const byId = Object.fromEntries(NODES.map(n => [n.id, n]));
+
+/* ---------- Canvas setup ---------- */
+const canvas = document.getElementById('sky');
+const ctx = canvas.getContext('2d');
+let W = 0, H = 0, DPR = 1, cx = 0, cy = 0, scale = 1;
+let viewOffsetX = 0, targetOffsetX = 0;
+
+function resize() {
+  DPR = Math.min(window.devicePixelRatio || 1, 2);
+  W = window.innerWidth; H = window.innerHeight;
+  canvas.width = W * DPR; canvas.height = H * DPR;
+  ctx.setTransform(DPR, 0, 0, DPR, 0, 0);
+  cx = W / 2; cy = H / 2 + 14;
+  // fit: planet orbit + moon orbit + radius + label margin (~ 360 logical units radius)
+  scale = Math.min(W, H) / 820;
+  scale = Math.max(0.5, Math.min(scale, 1.25));
+  buildStars();
+}
+window.addEventListener('resize', resize);
+
+/* ---------- Geometry (logical units, multiplied by scale) ---------- */
+const PLANET_ORBIT = 250;
+const MOON_ORBIT = 78;
+const R_SUN = 38, R_PLANET = 22, R_MOON = 12;
+const MOON_SPEED_SCALE = 0.22;   // lower = slower moon orbits (tune to taste)
+
+/* ---------- Starfield ---------- */
+let stars = [];
+function buildStars() {
+  const n = Math.round((W * H) / 7000);
+  stars = [];
+  for (let i = 0; i < n; i++) {
+    stars.push({
+      x: pseudo(i * 3.1) * W,
+      y: pseudo(i * 7.7 + 1) * H,
+      r: 0.4 + pseudo(i * 2.3) * 1.4,
+      ph: pseudo(i * 5.9) * Math.PI * 2,
+      sp: 0.6 + pseudo(i * 1.7) * 1.6
+    });
+  }
+}
+// deterministic pseudo-random (Math.random avoided for stability)
+function pseudo(s) { const x = Math.sin(s * 12.9898 + 78.233) * 43758.5453; return x - Math.floor(x); }
+
+/* ---------- Interaction state ---------- */
+let t = 0;
+let hovered = null;
+let selected = null;
+let filterCluster = null;
+let motionFactor = 1;            // eases to 0 while hovering / panel open, so orbits hold still to click
+const mouse = { x: -1, y: -1, inside: false };
+
+const ease = (a, b, k) => a + (b - a) * k;
+
+/* ---------- Position update ---------- */
+function updatePositions(dt) {
+  // freeze orbital motion while hovering a body or while a panel is open
+  motionFactor = ease(motionFactor, (hovered || selected) ? 0 : 1, 0.12);
+  for (const p of PLANETS) {
+    p.angle += p.speed * dt * motionFactor;
+    p.x = cx + viewOffsetX + Math.cos(p.angle) * PLANET_ORBIT * scale;
+    p.y = cy + Math.sin(p.angle) * PLANET_ORBIT * scale;
+    for (const c of p.kids) {
+      c.a += c.speed * MOON_SPEED_SCALE * dt * motionFactor;
+      c.x = p.x + Math.cos(c.a) * MOON_ORBIT * scale;
+      c.y = p.y + Math.sin(c.a) * MOON_ORBIT * scale;
+    }
+  }
+  SUN.x = cx + viewOffsetX; SUN.y = cy;
+  // ease highlight per node
+  for (const n of NODES) {
+    const want = focusAlpha(n);
+    n._a = ease(n._a == null ? want : n._a, want, 0.12);
+    const hot = (n === hovered || n === selected) ? 1 : 0;
+    n._hl = ease(n._hl || 0, hot, 0.18);
+  }
+}
+
+function inFocus(n) {
+  // which nodes are emphasized given hover/selection/filter
+  if (filterCluster && n.cluster !== filterCluster) return false;
+  const active = selected || hovered;
+  if (!active) return true;
+  if (n === active) return true;
+  if (n === active.parent) return true;
+  if (active.kids && active.kids.includes(n)) return true;
+  if (n.parent && n.parent === active.parent) return true; // siblings
+  if (active.role === 'moon' && n === active.parent.parent) return true; // moon -> sun via planet
+  return false;
+}
+function focusAlpha(n) { return inFocus(n) ? 1 : 0.18; }
+
+/* ---------- Radii helpers ---------- */
+function radiusOf(n) {
+  const base = n.role === 'sun' ? R_SUN : n.role === 'planet' ? R_PLANET : R_MOON;
+  return base * scale * (1 + n._hl * 0.22);
+}
+
+/* ---------- Drawing ---------- */
+function draw() {
+  // background
+  const g = ctx.createRadialGradient(cx + viewOffsetX, cy, 40, cx + viewOffsetX, cy, Math.max(W, H) * 0.75);
+  g.addColorStop(0, '#160d28');
+  g.addColorStop(0.55, '#0c0717');
+  g.addColorStop(1, '#05030c');
+  ctx.fillStyle = g;
+  ctx.fillRect(0, 0, W, H);
+
+  // stars
+  for (const s of stars) {
+    const tw = 0.45 + 0.55 * (0.5 + 0.5 * Math.sin(t * 0.001 * s.sp + s.ph));
+    ctx.globalAlpha = tw * 0.8;
+    ctx.beginPath(); ctx.arc(s.x, s.y, s.r, 0, 7); ctx.fillStyle = '#cfc7ec'; ctx.fill();
+  }
+  ctx.globalAlpha = 1;
+
+  // planet orbit ring
+  ctx.save();
+  ctx.strokeStyle = 'rgba(160,140,220,0.14)';
+  ctx.lineWidth = 1; ctx.setLineDash([2, 7]);
+  ctx.beginPath(); ctx.arc(cx + viewOffsetX, cy, PLANET_ORBIT * scale, 0, 7); ctx.stroke();
+  ctx.setLineDash([]);
+  ctx.restore();
+
+  // connection lines (sun->planet always faint; brighten on focus). planet->moon faint.
+  for (const p of PLANETS) {
+    drawLink(SUN, p, linkAlpha(SUN, p), p.glow);
+    // moon orbit rings + links when planet/moon focused
+    const planetFocus = (selected && (selected === p || (selected.parent === p))) ||
+                        (hovered && (hovered === p || hovered.parent === p));
+    if (planetFocus) {
+      ctx.save();
+      ctx.strokeStyle = hexA(p.glow, 0.18); ctx.lineWidth = 1; ctx.setLineDash([1, 6]);
+      ctx.beginPath(); ctx.arc(p.x, p.y, MOON_ORBIT * scale, 0, 7); ctx.stroke();
+      ctx.restore();
+    }
+    for (const c of p.kids) drawLink(p, c, linkAlpha(p, c), c.glow);
+  }
+
+  // nodes (draw sun last so it sits on top of links; moons first, planets, sun)
+  for (const c of NODES.filter(n => n.role === 'moon')) drawNode(c);
+  for (const p of PLANETS) drawNode(p);
+  drawNode(SUN);
+}
+
+function linkAlpha(a, b) {
+  const base = 0.12;
+  const focus = Math.max(a._hl || 0, b._hl || 0,
+    (selected && (isRelated(selected, a) && isRelated(selected, b))) ? 0.6 : 0);
+  const dim = Math.min(a._a == null ? 1 : a._a, b._a == null ? 1 : b._a);
+  return (base + focus * 0.7) * (0.3 + 0.7 * dim);
+}
+function isRelated(sel, n) {
+  return n === sel || n === sel.parent || (sel.kids && sel.kids.includes(n)) ||
+         (n.parent && n.parent === sel.parent) || (sel.role === 'moon' && n === sel.parent.parent);
+}
+
+function drawLink(a, b, alpha, color) {
+  if (alpha <= 0.01) return;
+  ctx.save();
+  const grad = ctx.createLinearGradient(a.x, a.y, b.x, b.y);
+  grad.addColorStop(0, hexA(a.glow || color, alpha));
+  grad.addColorStop(1, hexA(color, alpha));
+  ctx.strokeStyle = grad;
+  ctx.lineWidth = 1.4 * scale;
+  ctx.shadowColor = hexA(color, alpha * 0.8); ctx.shadowBlur = 8 * alpha;
+  ctx.beginPath(); ctx.moveTo(a.x, a.y); ctx.lineTo(b.x, b.y); ctx.stroke();
+  ctx.restore();
+}
+
+function drawNode(n) {
+  const r = radiusOf(n);
+  const a = n._a == null ? 1 : n._a;
+  ctx.save();
+  ctx.globalAlpha = a;
+
+  // outer glow halo
+  const haloR = r * (n.role === 'sun' ? 4.2 : 3.0) * (1 + (n.role === 'sun' ? 0.06 * Math.sin(t * 0.0016) : 0));
+  const halo = ctx.createRadialGradient(n.x, n.y, r * 0.5, n.x, n.y, haloR);
+  halo.addColorStop(0, hexA(n.glow, 0.55 * (0.5 + 0.5 * (n._hl || 0)) + (n.role === 'sun' ? 0.25 : 0.12)));
+  halo.addColorStop(1, hexA(n.glow, 0));
+  ctx.fillStyle = halo;
+  ctx.beginPath(); ctx.arc(n.x, n.y, haloR, 0, 7); ctx.fill();
+
+  // body
+  const body = ctx.createRadialGradient(n.x - r * 0.35, n.y - r * 0.4, r * 0.1, n.x, n.y, r);
+  body.addColorStop(0, lighten(n.color, 0.5));
+  body.addColorStop(0.6, n.color);
+  body.addColorStop(1, darken(n.color, 0.35));
+  ctx.fillStyle = body;
+  ctx.shadowColor = hexA(n.glow, 0.9); ctx.shadowBlur = (n.role === 'sun' ? 38 : 18) * (0.6 + 0.4 * (n._hl || 0));
+  ctx.beginPath(); ctx.arc(n.x, n.y, r, 0, 7); ctx.fill();
+
+  // ring on hover/select
+  if ((n._hl || 0) > 0.02) {
+    ctx.shadowBlur = 0;
+    ctx.strokeStyle = hexA('#ffffff', 0.7 * n._hl);
+    ctx.lineWidth = 1.5;
+    ctx.beginPath(); ctx.arc(n.x, n.y, r + 5 * scale + 3 * n._hl, 0, 7); ctx.stroke();
+  }
+  ctx.restore();
+
+  // label
+  ctx.save();
+  ctx.globalAlpha = a;
+  const big = n.role === 'sun' || n.role === 'planet' || (n._hl || 0) > 0.3;
+  ctx.font = `${n.role === 'sun' ? 600 : 500} ${(n.role === 'sun' ? 16 : n.role === 'planet' ? 14 : 12) * Math.min(scale + 0.2, 1.15)}px -apple-system, Segoe UI, Inter, sans-serif`;
+  ctx.textAlign = 'center'; ctx.textBaseline = 'top';
+  ctx.fillStyle = big ? '#F3EFFB' : 'rgba(220,214,240,0.66)';
+  ctx.shadowColor = 'rgba(0,0,0,0.85)'; ctx.shadowBlur = 6;
+  ctx.fillText(n.label, n.x, n.y + r + 6 * scale);
+  ctx.restore();
+}
+
+/* ---------- Color utils ---------- */
+function hexToRgb(h) {
+  h = h.replace('#', '');
+  if (h.length === 3) h = h.split('').map(c => c + c).join('');
+  const n = parseInt(h, 16);
+  return [(n >> 16) & 255, (n >> 8) & 255, n & 255];
+}
+function hexA(h, a) { const [r, g, b] = hexToRgb(h); return `rgba(${r},${g},${b},${a})`; }
+function lighten(h, k) { const [r, g, b] = hexToRgb(h); return `rgb(${Math.round(r + (255 - r) * k)},${Math.round(g + (255 - g) * k)},${Math.round(b + (255 - b) * k)})`; }
+function darken(h, k) { const [r, g, b] = hexToRgb(h); return `rgb(${Math.round(r * (1 - k))},${Math.round(g * (1 - k))},${Math.round(b * (1 - k))})`; }
+
+/* ---------- Hit testing ---------- */
+function hitTest(mx, my) {
+  let best = null, bestD = Infinity;
+  for (const n of NODES) {
+    const r = radiusOf(n) + 6;
+    const d = (n.x - mx) ** 2 + (n.y - my) ** 2;
+    if (d < r * r && d < bestD) { bestD = d; best = n; }
+  }
+  return best;
+}
+
+/* ---------- Mouse / touch ---------- */
+canvas.addEventListener('mousemove', e => {
+  mouse.x = e.clientX; mouse.y = e.clientY; mouse.inside = true;
+  const hit = hitTest(e.clientX, e.clientY);
+  hovered = hit;
+  canvas.style.cursor = hit ? 'pointer' : 'grab';
+  updateTooltip(hit, e.clientX, e.clientY);
+});
+canvas.addEventListener('mouseleave', () => { hovered = null; mouse.inside = false; hideTooltip(); });
+canvas.addEventListener('click', e => {
+  const hit = hitTest(e.clientX, e.clientY);
+  if (hit) selectNode(hit); else deselect();
+});
+
+const tooltip = document.getElementById('tooltip');
+function updateTooltip(n, x, y) {
+  if (!n || n === selected) { hideTooltip(); return; }
+  tooltip.querySelector('.tt-name').textContent = n.label;
+  tooltip.querySelector('.tt-tag').textContent = n.tag || '';
+  tooltip.style.left = x + 'px'; tooltip.style.top = y + 'px';
+  tooltip.style.opacity = '1';
+}
+function hideTooltip() { tooltip.style.opacity = '0'; }
+
+/* ---------- Detail panel ---------- */
+const panel = document.getElementById('panel');
+function selectNode(n) {
+  selected = n; hideTooltip();
+  targetOffsetX = -(Math.min(380, window.innerWidth * 0.92)) / 2.4;
+
+  document.getElementById('p-accent').style.background =
+    `linear-gradient(90deg, ${n.color}, ${n.glow})`;
+  document.getElementById('p-pdot').style.color = n.color;
+  document.getElementById('p-pdot').style.background = n.color;
+  document.getElementById('p-kind').textContent = n.kind || '';
+  document.getElementById('p-name').textContent = n.label;
+  document.getElementById('p-tag').textContent = n.tag || '';
+  document.getElementById('p-desc').textContent = n.desc || '';
+
+  const chips = document.getElementById('p-chips');
+  chips.innerHTML = '';
+  (n.chips || []).forEach(c => { const el = document.createElement('span'); el.className = 'chip'; el.textContent = c; chips.appendChild(el); });
+
+  const meta = document.getElementById('p-meta');
+  meta.innerHTML = '';
+  (n.meta || []).forEach(([k, v]) => {
+    const row = document.createElement('div'); row.className = 'row';
+    row.innerHTML = `<span class="k">${k}</span><span class="v">${v}</span>`;
+    meta.appendChild(row);
+  });
+
+  const launch = document.getElementById('p-launch');
+  launch.href = n.url || '#';
+  launch.style.background = `linear-gradient(120deg, ${n.glow}, ${n.color})`;
+  launch.style.boxShadow = `0 10px 30px ${hexA(n.glow, 0.4)}`;
+  launch.firstChild.textContent = n.role === 'sun' ? 'Open Poily ' : 'Open ' + n.label + ' ';
+
+  // relationships
+  const relwrap = document.getElementById('p-relwrap');
+  const relhead = document.getElementById('p-relhead');
+  const rels = document.getElementById('p-rels');
+  rels.innerHTML = '';
+  let list = [];
+  if (n.role === 'sun') { relhead.textContent = 'Operates'; list = PLANETS; }
+  else if (n.role === 'planet') { relhead.textContent = 'Includes'; list = n.kids; }
+  else { relhead.textContent = n.leadMagnet ? 'A free tool by' : 'Part of'; list = [n.parent]; }
+  if (list && list.length) {
+    relwrap.style.display = '';
+    list.forEach(r => {
+      const el = document.createElement('div'); el.className = 'rel';
+      el.innerHTML = `<span class="rdot" style="color:${r.color};background:${r.color}"></span>
+                      <span class="rname">${r.label}</span><span class="rkind">${r.kind || ''}</span>`;
+      el.addEventListener('click', () => selectNode(r));
+      rels.appendChild(el);
+    });
+  } else { relwrap.style.display = 'none'; }
+
+  panel.classList.add('open'); panel.setAttribute('aria-hidden', 'false');
+  fade(false);
+}
+function deselect() {
+  selected = null; targetOffsetX = 0;
+  panel.classList.remove('open'); panel.setAttribute('aria-hidden', 'true');
+  fade(true);
+}
+document.getElementById('p-close').addEventListener('click', deselect);
+window.addEventListener('keydown', e => { if (e.key === 'Escape') deselect(); });
+
+function fade(show) {
+  document.getElementById('hint').style.opacity = show ? '1' : '0';
+}
+
+/* ---------- Legend ---------- */
+const legendEl = document.getElementById('legend');
+legendEl.innerHTML = '<div class="lhead">Products</div>';
+LEGEND.forEach(l => {
+  const item = document.createElement('div'); item.className = 'item'; item.dataset.cluster = l.cluster;
+  item.innerHTML = `<span class="dot" style="color:${l.color};background:${l.color}"></span>${l.label}`;
+  item.addEventListener('click', () => {
+    filterCluster = (filterCluster === l.cluster) ? null : l.cluster;
+    [...legendEl.querySelectorAll('.item')].forEach(it =>
+      it.classList.toggle('dim', filterCluster && it.dataset.cluster !== filterCluster));
+  });
+  legendEl.appendChild(item);
+});
+
+/* ---------- Main loop ---------- */
+let last = 0;
+function loop(now) {
+  const dt = Math.min(now - last, 60); last = now; t = now;
+  viewOffsetX = ease(viewOffsetX, targetOffsetX, 0.08);
+  updatePositions(dt);
+  draw();
+  requestAnimationFrame(loop);
+}
+
+resize();
+requestAnimationFrame(loop);
+</script>
+</body>
+</html>
