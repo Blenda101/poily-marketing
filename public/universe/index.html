@@ -95,6 +95,7 @@
     box-shadow: -30px 0 60px rgba(0,0,0,0.45);
   }
   .panel.open { transform: translateX(0); }
+  .sheet-handle { display: none; width: 40px; height: 4px; border-radius: 4px; background: rgba(255,255,255,0.28); margin: 9px auto 2px; flex: none; touch-action: none; }
   .panel .accent { height: 5px; width: 100%; flex: none; }
   .panel .pbody { padding: 26px 26px 30px; overflow-y: auto; }
   .panel .close {
@@ -153,6 +154,21 @@
     .legend .lhead { display: none; }
     .legend .item { font-size: 12px; padding: 4px 8px; margin: 0; }
     .hint { bottom: 20px; font-size: 11px; padding: 0 14px; }
+
+    /* detail panel becomes a bottom sheet on phones (keeps the map visible above) */
+    .panel {
+      width: 100%; max-width: 100%; top: auto; bottom: 0;
+      height: auto; max-height: 80vh;
+      border-left: none; border-top: 1px solid rgba(255,255,255,0.1);
+      border-radius: 18px 18px 0 0;
+      transform: translateY(100%);
+      box-shadow: 0 -22px 48px rgba(0,0,0,0.5);
+    }
+    .panel.open { transform: translateY(0); }
+    .sheet-handle { display: block; }
+    .panel .accent { border-radius: 0; }
+    .panel .close { top: 10px; }
+    .panel .pbody { flex: 1 1 auto; min-height: 0; padding-top: 10px; }
   }
 </style>
 </head>
@@ -178,6 +194,7 @@
 </div>
 
 <aside class="panel" id="panel" aria-hidden="true">
+  <div class="sheet-handle" id="sheet-handle"></div>
   <div class="accent" id="p-accent"></div>
   <button class="close" id="p-close" aria-label="Close">×</button>
   <div class="pbody">
@@ -311,6 +328,7 @@ const canvas = document.getElementById('sky');
 const ctx = canvas.getContext('2d');
 let W = 0, H = 0, DPR = 1, cx = 0, cy = 0, scale = 1;
 let viewOffsetX = 0, targetOffsetX = 0;
+let viewOffsetY = 0, targetOffsetY = 0;   // mobile: lift the system above the bottom sheet
 
 function resize() {
   DPR = Math.min(window.devicePixelRatio || 1, 2);
@@ -366,14 +384,14 @@ function updatePositions(dt) {
   for (const p of PLANETS) {
     p.angle += p.speed * dt * motionFactor;
     p.x = cx + viewOffsetX + Math.cos(p.angle) * PLANET_ORBIT * scale;
-    p.y = cy + Math.sin(p.angle) * PLANET_ORBIT * scale;
+    p.y = cy + viewOffsetY + Math.sin(p.angle) * PLANET_ORBIT * scale;
     for (const c of p.kids) {
       c.a += c.speed * MOON_SPEED_SCALE * dt * motionFactor;
       c.x = p.x + Math.cos(c.a) * MOON_ORBIT * scale;
       c.y = p.y + Math.sin(c.a) * MOON_ORBIT * scale;
     }
   }
-  SUN.x = cx + viewOffsetX; SUN.y = cy;
+  SUN.x = cx + viewOffsetX; SUN.y = cy + viewOffsetY;
   // ease highlight per node
   for (const n of NODES) {
     const want = focusAlpha(n);
@@ -425,7 +443,7 @@ function draw() {
   ctx.save();
   ctx.strokeStyle = 'rgba(160,140,220,0.14)';
   ctx.lineWidth = 1; ctx.setLineDash([2, 7]);
-  ctx.beginPath(); ctx.arc(cx + viewOffsetX, cy, PLANET_ORBIT * scale, 0, 7); ctx.stroke();
+  ctx.beginPath(); ctx.arc(cx + viewOffsetX, cy + viewOffsetY, PLANET_ORBIT * scale, 0, 7); ctx.stroke();
   ctx.setLineDash([]);
   ctx.restore();
 
@@ -569,7 +587,12 @@ function hideTooltip() { tooltip.style.opacity = '0'; }
 const panel = document.getElementById('panel');
 function selectNode(n) {
   selected = n; hideTooltip();
-  targetOffsetX = -(Math.min(380, window.innerWidth * 0.92)) / 2.4;
+  if (window.matchMedia('(max-width: 560px)').matches) {
+    // bottom sheet: don't shift sideways, lift the system up so the node clears the sheet
+    targetOffsetX = 0; targetOffsetY = -(window.innerHeight * 0.20);
+  } else {
+    targetOffsetX = -(Math.min(380, window.innerWidth * 0.92)) / 2.4; targetOffsetY = 0;
+  }
 
   document.getElementById('p-accent').style.background =
     `linear-gradient(90deg, ${n.color}, ${n.glow})`;
@@ -622,7 +645,7 @@ function selectNode(n) {
   fade(false);
 }
 function deselect() {
-  selected = null; targetOffsetX = 0;
+  selected = null; targetOffsetX = 0; targetOffsetY = 0;
   panel.classList.remove('open'); panel.setAttribute('aria-hidden', 'true');
   fade(true);
 }
@@ -652,10 +675,22 @@ let last = 0;
 function loop(now) {
   const dt = Math.min(now - last, 60); last = now; t = now;
   viewOffsetX = ease(viewOffsetX, targetOffsetX, 0.08);
+  viewOffsetY = ease(viewOffsetY, targetOffsetY, 0.08);
   updatePositions(dt);
   draw();
   requestAnimationFrame(loop);
 }
+
+// bottom-sheet: drag the handle down to dismiss
+(() => {
+  const handle = document.getElementById('sheet-handle');
+  let startY = null;
+  handle.addEventListener('touchstart', e => { startY = e.touches[0].clientY; }, { passive: true });
+  handle.addEventListener('touchmove', e => {
+    if (startY != null && e.touches[0].clientY - startY > 55) { deselect(); startY = null; }
+  }, { passive: true });
+  handle.addEventListener('touchend', () => { startY = null; });
+})();
 
 // touch devices have no hover — tell them to tap, and reword the hint accordingly
 const isTouch = window.matchMedia('(hover: none), (pointer: coarse)').matches;
