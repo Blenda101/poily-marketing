@@ -27,7 +27,7 @@ const steps = [
     n: '04',
     icon: Lock,
     title: 'Upgrade',
-    body: 'They hit a feature gate and self-serve upgrade — entitlements update instantly.',
+    body: 'They hit a feature gate; an in-app paywall — priced to their plan — converts in one click, and entitlements update instantly.',
   },
   {
     n: '05',

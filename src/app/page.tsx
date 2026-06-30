@@ -13,7 +13,6 @@ import {
   ArrowRight,
 } from 'lucide-react'
 import type { LucideIcon } from 'lucide-react'
-import Image from 'next/image'
 import SiteNav from '@/components/SiteNav'
 import HeroMotif from '@/components/HeroMotif'
 import HowItWorks from '@/components/HowItWorks'
@@ -21,6 +20,9 @@ import CreationIntelligence from '@/components/CreationIntelligence'
 import Intelligence from '@/components/Intelligence'
 import WaitlistForm from '@/components/WaitlistForm'
 import ScrollReveal from '@/components/ScrollReveal'
+import SiteFooter from '@/components/SiteFooter'
+import ChannelCard, { ChannelLegend } from '@/components/ChannelCard'
+import { CHANNELS } from '@/lib/channels'
 
 export default function HomePage() {
   return (
@@ -74,7 +76,7 @@ export default function HomePage() {
               {/* channel breadth — a hint, not fake logos */}
               <div className="mt-9 pt-6 border-t border-line">
                 <p className="text-[11px] font-semibold tracking-[0.14em] uppercase text-ink-faint mb-3">
-                  Six channels, one workspace
+                  Every channel, one workspace
                 </p>
                 <div className="flex flex-wrap gap-x-5 gap-y-2.5">
                   {[
@@ -101,41 +103,39 @@ export default function HomePage() {
           </div>
         </section>
 
-        {/* ──────────────────── Channels (bento) ──────────────────── */}
+        {/* ──────────────────── Channels (3×3, two families) ──────────────────── */}
         <section id="channels" className="bg-sand border-y border-line">
           <div className="max-w-shell mx-auto px-5 sm:px-8 py-20 lg:py-28">
-            <div className="max-w-2xl reveal">
-              <span className="text-xs font-semibold tracking-[0.14em] uppercase text-brand">
-                One platform
-              </span>
-              <h2 className="mt-3 font-display text-[clamp(28px,3.6vw,46px)] font-bold tracking-[-0.015em] text-ink leading-[1.1]">
-                Every channel, no stitching.
-              </h2>
-              <p className="mt-4 text-[17px] leading-relaxed text-ink-mid">
-                Stop stitching together six tools. Poily runs every acquisition channel from one place —
-                each with its own brand and custom domain.
-              </p>
+            <div className="reveal flex flex-col gap-6 lg:flex-row lg:items-end lg:justify-between">
+              <div className="max-w-2xl">
+                <span className="text-xs font-semibold tracking-[0.14em] uppercase text-brand">
+                  One platform
+                </span>
+                <h2 className="mt-3 font-display text-[clamp(28px,3.6vw,46px)] font-bold tracking-[-0.015em] text-ink leading-[1.1]">
+                  Every channel, one workspace.
+                </h2>
+                <p className="mt-4 text-[17px] leading-relaxed text-ink-mid">
+                  Stop stitching together a dozen tools. Acquisition channels bring users to the door;
+                  activation channels engage them inside the product — all on one customer record, one
+                  plan model, one event stream.
+                </p>
+              </div>
+              <a
+                href="/channels"
+                className="inline-flex shrink-0 items-center gap-2 rounded-full border border-brand-mid bg-white px-5 py-3 text-sm font-semibold text-brand transition-colors hover:bg-brand-tint">
+                Explore all channels
+                <ArrowRight size={16} strokeWidth={2.4} />
+              </a>
             </div>
 
-            <div className="mt-12 grid sm:grid-cols-2 lg:grid-cols-3 gap-4 reveal reveal-d1">
-              <ChannelTile icon={Mail} title="Email">
-                Campaigns and lifecycle sequences that convert.
-              </ChannelTile>
-              <ChannelTile icon={LayoutTemplate} title="Landing pages & forms">
-                On-brand pages and conversational forms, hosted on your own domain.
-              </ChannelTile>
-              <ChannelTile icon={Share2} title="Social media">
-                Plan, schedule, and publish across your social presence.
-              </ChannelTile>
-              <ChannelTile icon={FileText} title="Content & SEO">
-                Publish content built to rank, from one CMS.
-              </ChannelTile>
-              <ChannelTile icon={Megaphone} title="Digital advertising">
-                Paid search and social, with audiences synced to Google, Meta, and LinkedIn — and ROAS you can see.
-              </ChannelTile>
-              <ChannelTile icon={Handshake} title="Affiliate & influencer">
-                Recruit partners and creators, share trackable links, and pay out on the subscriptions they actually drive.
-              </ChannelTile>
+            <div className="mt-7 reveal reveal-d1">
+              <ChannelLegend />
+            </div>
+
+            <div className="mt-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-3 reveal reveal-d1">
+              {CHANNELS.map((channel) => (
+                <ChannelCard key={channel.slug} channel={channel} />
+              ))}
             </div>
           </div>
         </section>
@@ -162,7 +162,7 @@ export default function HomePage() {
                 icon={Boxes}
                 eyebrow="The wedge"
                 title="Plan &amp; Entitlement Builder"
-                body="Define your plans and feature gates once. Poily becomes the canonical source of truth and syncs entitlements across product, billing, and marketing — no more pricing drift.">
+                body="Define plans and gates once — Poily becomes the source of truth. The same plan renders your pricing page, in-app billing portal, and onboarding, so the price you publish and the price you charge can never drift.">
                 <PlanMotif />
               </FeatureTile>
 
@@ -231,70 +231,12 @@ export default function HomePage() {
         </section>
       </main>
 
-      {/* ──────────────────────── Footer ──────────────────────── */}
-      <footer className="bg-dark-deep border-t border-white/[0.07]">
-        <div className="max-w-shell mx-auto px-5 sm:px-8 py-12">
-          <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-8">
-            <div className="max-w-md">
-              <div className="flex items-center gap-2.5">
-                {/* white chip so the violet mark stays crisp on the dark footer */}
-                <span className="flex h-7 w-7 items-center justify-center rounded-lg bg-white">
-                  <Image src="/poily-logo.svg" alt="" width={300} height={218} unoptimized className="h-4 w-auto" />
-                </span>
-                <span className="font-display text-lg font-extrabold tracking-tight text-white">Poily</span>
-              </div>
-              <p className="mt-3 text-sm leading-relaxed text-white/45">
-                Every marketing channel, plus the one thing built only for SaaS: your plans.
-              </p>
-            </div>
-
-            <nav className="flex flex-wrap gap-x-8 gap-y-3">
-              <a href="#channels" className="text-sm text-white/55 hover:text-white transition-colors">
-                Channels
-              </a>
-              <a href="#platform" className="text-sm text-white/55 hover:text-white transition-colors">
-                Platform
-              </a>
-              <a href="#waitlist" className="text-sm text-white/55 hover:text-white transition-colors">
-                Join waitlist
-              </a>
-            </nav>
-          </div>
-
-          <div className="mt-10 pt-6 border-t border-white/[0.07] flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
-            <span className="text-xs text-white/30">&copy; 2026 Poily. All rights reserved.</span>
-            <span className="text-xs text-white/30">The HubSpot for SaaS.</span>
-          </div>
-        </div>
-      </footer>
+      <SiteFooter />
     </>
   )
 }
 
 /* ───────────────────────── Local presentational components ───────────────────────── */
-
-function ChannelTile({
-  className = '',
-  icon: Icon,
-  title,
-  children,
-}: {
-  className?: string
-  icon: LucideIcon
-  title: string
-  children: React.ReactNode
-}) {
-  return (
-    <div
-      className={`group relative h-full rounded-tile bg-white border border-line p-6 shadow-tile transition-all duration-300 hover:-translate-y-1 hover:shadow-tile-lg ${className}`}>
-      <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-brand-tint text-brand transition-colors duration-300 group-hover:bg-brand group-hover:text-white">
-        <Icon size={20} strokeWidth={2} />
-      </div>
-      <h3 className="mt-4 font-display text-[19px] font-bold text-ink">{title}</h3>
-      <p className="mt-2 text-[15px] leading-relaxed text-ink-mid">{children}</p>
-    </div>
-  )
-}
 
 function FeatureTile({
   className = '',
