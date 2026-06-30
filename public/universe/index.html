@@ -142,8 +142,17 @@
   .panel .rel .rkind { font-size: 11px; color: var(--muted); margin-left: auto; }
 
   @media (max-width: 560px) {
-    .legend { transform: scale(.9); transform-origin: top left; }
     .title { top: 14px; }
+    /* legend moves off the title to a centered pill row near the bottom */
+    .legend {
+      top: auto; bottom: 60px; left: 50%; right: auto;
+      transform: translateX(-50%);
+      flex-direction: row; flex-wrap: wrap; justify-content: center;
+      gap: 7px 14px; padding: 10px 14px; max-width: 94vw;
+    }
+    .legend .lhead { display: none; }
+    .legend .item { font-size: 12px; padding: 4px 8px; margin: 0; }
+    .hint { bottom: 20px; font-size: 11px; padding: 0 14px; }
   }
 </style>
 </head>
@@ -276,7 +285,7 @@ const PLANETS = [
 ];
 
 const LEGEND = [
-  { cluster: 'platform', label: 'Poily — control plane', color: '#8B5CF6' },
+  { cluster: 'platform', label: 'Poily', color: '#8B5CF6' },
   { cluster: 'doerfy', label: 'Doerfy', color: '#7C5CFF' },
   { cluster: 'bigtopa', label: 'BigTopa', color: '#FF7A35' },
   { cluster: 'goalgauntlet', label: 'GoalGauntlet', color: '#F97316' }
@@ -626,7 +635,7 @@ function fade(show) {
 
 /* ---------- Legend ---------- */
 const legendEl = document.getElementById('legend');
-legendEl.innerHTML = '<div class="lhead">Products</div>';
+legendEl.innerHTML = '<div class="lhead">Product Families</div>';
 LEGEND.forEach(l => {
   const item = document.createElement('div'); item.className = 'item'; item.dataset.cluster = l.cluster;
   item.innerHTML = `<span class="dot" style="color:${l.color};background:${l.color}"></span>${l.label}`;
@@ -646,6 +655,12 @@ function loop(now) {
   updatePositions(dt);
   draw();
   requestAnimationFrame(loop);
+}
+
+// touch devices have no hover — tell them to tap, and reword the hint accordingly
+const isTouch = window.matchMedia('(hover: none), (pointer: coarse)').matches;
+if (isTouch) {
+  document.getElementById('hint').innerHTML = '<b>Tap</b> a product to open its overview panel';
 }
 
 resize();
