@@ -1,0 +1,443 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>The SaaS Go-to-Market Landscape</title>
+<style>
+  :root { --ink:#07060f; --text:#ECE9F5; --muted:#948DAE; --panel-w:400px; }
+  * { box-sizing: border-box; }
+  html, body { margin:0; height:100%; overflow:hidden; background:var(--ink); color:var(--text);
+    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Inter,Roboto,sans-serif; -webkit-font-smoothing:antialiased; }
+  canvas { display:block; width:100%; height:100%; cursor:grab; }
+
+  .title { position:fixed; top:24px; left:0; right:0; text-align:center; pointer-events:none; z-index:5; padding:0 16px; }
+  .title h1 { margin:0; font-size:clamp(20px,3.2vw,32px); font-weight:700; letter-spacing:-.02em;
+    background:linear-gradient(100deg,#C4B5FD,#fff 45%,#DDD6FE); -webkit-background-clip:text; background-clip:text; color:transparent; }
+  .title p { margin:7px auto 0; max-width:640px; font-size:clamp(11px,1.5vw,14px); color:var(--muted); line-height:1.5; }
+  .title b { color:#C4B5FD; font-weight:600; }
+
+  .legend { position:fixed; top:20px; left:20px; z-index:6; padding:13px 15px; border-radius:14px;
+    background:rgba(18,13,30,.6); border:1px solid rgba(255,255,255,.08); backdrop-filter:blur(14px); max-width:230px; }
+  .legend .lhead { font-size:10px; letter-spacing:.16em; text-transform:uppercase; color:var(--muted); margin-bottom:9px; }
+  .lgrid { display:grid; grid-template-columns:1fr 1fr; gap:7px 16px; }
+  .litem { display:flex; align-items:center; gap:7px; font-size:12px; opacity:.9; }
+  .lpin { width:9px; height:9px; border-radius:50%; flex:none; box-shadow:0 0 8px currentColor; }
+  .legend .lnote { margin-top:11px; font-size:11px; color:var(--muted); line-height:1.45; border-top:1px solid rgba(255,255,255,.08); padding-top:9px; }
+  .legend .lnote b { color:#FBBF24; }
+
+  .hint { position:fixed; bottom:16px; left:0; right:0; text-align:center; font-size:12px; color:var(--muted); pointer-events:none; z-index:5; padding:0 16px; }
+  .disclaimer { position:fixed; bottom:15px; right:18px; z-index:5; font-size:10px; color:#5b556e; text-align:right; max-width:280px; line-height:1.4; pointer-events:none; }
+
+  .tooltip { position:fixed; z-index:20; pointer-events:none; padding:9px 13px; border-radius:10px; max-width:260px;
+    background:rgba(14,9,24,.94); border:1px solid rgba(255,255,255,.12); backdrop-filter:blur(8px);
+    transform:translate(-50%,-128%); transition:opacity .12s; opacity:0; }
+  .tooltip .tt-n { font-size:13px; font-weight:600; }
+  .tooltip .tt-s { font-size:11px; color:var(--muted); margin-top:3px; }
+
+  .panel { position:fixed; top:0; right:0; height:100%; width:var(--panel-w); max-width:94vw; z-index:15;
+    background:linear-gradient(180deg,rgba(22,15,38,.94),rgba(10,7,20,.97)); border-left:1px solid rgba(255,255,255,.09);
+    backdrop-filter:blur(18px); transform:translateX(105%); transition:transform .42s cubic-bezier(.22,.9,.3,1);
+    display:flex; flex-direction:column; box-shadow:-30px 0 60px rgba(0,0,0,.45); }
+  .panel.open { transform:translateX(0); }
+  .panel .accent { height:5px; flex:none; }
+  .panel .close { position:absolute; top:14px; right:16px; width:32px; height:32px; border-radius:50%; border:none; cursor:pointer;
+    background:rgba(255,255,255,.08); color:var(--text); font-size:17px; z-index:2; }
+  .panel .close:hover { background:rgba(255,255,255,.18); }
+  .pbody { padding:24px 24px 30px; overflow-y:auto; }
+  .kick { display:inline-flex; align-items:center; gap:7px; font-size:11px; letter-spacing:.14em; text-transform:uppercase; color:var(--muted); margin-bottom:10px; }
+  .kick .kdot { width:9px; height:9px; border-radius:50%; box-shadow:0 0 10px currentColor; }
+  .panel h2 { margin:0 0 4px; font-size:25px; font-weight:700; letter-spacing:-.02em; }
+  .tamrow { display:flex; align-items:baseline; gap:10px; margin:10px 0 4px; }
+  .tamrow .tam { font-size:30px; font-weight:800; letter-spacing:-.02em; }
+  .tamrow .taml { font-size:11px; color:var(--muted); text-transform:uppercase; letter-spacing:.08em; }
+  .subnote { font-size:12px; color:#B9B2D0; line-height:1.5; margin:4px 0 16px; }
+  .subnote a { color:#A78BFA; }
+  .metaline { display:flex; gap:16px; margin-bottom:18px; flex-wrap:wrap; }
+  .metaline .m { font-size:12px; color:var(--muted); }
+  .metaline .m b { color:var(--text); font-size:14px; display:block; margin-top:2px; font-weight:600; }
+  .cohead { font-size:11px; letter-spacing:.14em; text-transform:uppercase; color:var(--muted); margin:6px 0 12px; }
+
+  .co { padding:11px 0; border-top:1px solid rgba(255,255,255,.07); }
+  .co-top { display:flex; align-items:baseline; justify-content:space-between; gap:10px; }
+  .co-name { font-size:14px; font-weight:600; }
+  .co-link { color:inherit; text-decoration:none; border-bottom:1px dashed rgba(255,255,255,.28); transition:color .15s,border-color .15s; }
+  .co-link:hover { color:#C4B5FD; border-bottom-color:#C4B5FD; }
+  .co-scale { font-size:12px; color:#D7D1E8; white-space:nowrap; }
+  .co-scale .sec { color:var(--muted); font-size:11px; }
+  .co-bar { height:5px; border-radius:3px; margin:7px 0 7px; background:rgba(255,255,255,.07); overflow:hidden; }
+  .co-bar > i { display:block; height:100%; border-radius:3px; }
+  .co-badges { display:flex; gap:4px; align-items:center; }
+  .bdg { width:11px; height:11px; border-radius:3px; flex:none; }
+  .co-status { font-size:10px; color:var(--muted); margin-left:6px; text-transform:uppercase; letter-spacing:.06em; }
+
+  .thesis { font-size:13px; line-height:1.6; color:#D7D1E8; }
+  .thesis .hl { color:#FBBF24; font-weight:600; }
+
+  @media (max-width:560px){ .legend{ transform:scale(.88); transform-origin:top left; } .disclaimer{ display:none; } .title{ top:12px; } }
+</style>
+</head>
+<body>
+<canvas id="sky"></canvas>
+
+<div class="title">
+  <h1>The SaaS Go-to-Market Landscape</h1>
+  <p>A <b>$437B</b> martech market, fragmented across <b>9 channels</b> — each its own funded field of point tools. Only Poily bundles <b>subscriptions + every marketing channel</b> in one package.</p>
+</div>
+
+<div class="legend" id="legend">
+  <div class="lhead">Channels</div>
+  <div class="lgrid" id="lgrid"></div>
+  <div class="lnote">★ Only <b>Outseta</b> bundles billing + marketing. Poily does too — plus every channel.</div>
+</div>
+
+<div class="hint" id="hint"><b style="color:#C4B5FD">Hover</b> a market to explore · <b style="color:#C4B5FD">click</b> for its funded field</div>
+<div class="disclaimer">Figures compiled from public sources (Crunchbase, filings, press) as of 2026. Mixed metrics — funding raised · valuation · market cap · acquisition — not comparable across firms. Category TAMs from varied research firms on differing bases.</div>
+
+<div class="tooltip" id="tooltip"><div class="tt-n"></div><div class="tt-s"></div></div>
+
+<aside class="panel" id="panel" aria-hidden="true">
+  <div class="accent" id="p-accent"></div>
+  <button class="close" id="p-close">×</button>
+  <div class="pbody" id="p-body"></div>
+</aside>
+
+<script>
+/* ============================================================================
+   THE SAAS GO-TO-MARKET LANDSCAPE — market galaxy
+   Data compiled from sourced research (2026). See notes in each category.
+   ========================================================================== */
+
+/* 9 channels — order is the badge order; color used for bubble + badges */
+const CATS = [
+  { key:'email',        label:'Email',                 color:'#F59E0B' },
+  { key:'landing',      label:'Landing & Forms',       color:'#34D399' },
+  { key:'social',       label:'Social',                color:'#3B82F6' },
+  { key:'seo',          label:'Content & SEO',         color:'#2DD4BF' },
+  { key:'advertising',  label:'Advertising',           color:'#F87171' },
+  { key:'affiliate',    label:'Affiliate',             color:'#F472B6' },
+  { key:'onboarding',   label:'Onboarding',            color:'#A78BFA' },
+  { key:'entitlements', label:'Subscriptions',         color:'#FBBF24' },
+  { key:'suites',       label:'Marketing Suites',      color:'#818CF8' },
+];
+const CATBYKEY = Object.fromEntries(CATS.map(c => [c.key, c]));
+// normalize the researchers' "also_in" strings to our keys
+const NORM = {
+  'Email':'email','Landing Pages & Forms':'landing','Landing Pages &amp; Forms':'landing','Social':'social',
+  'Content & SEO':'seo','Content &amp; SEO':'seo','Advertising':'advertising','Affiliate':'affiliate',
+  'Onboarding':'onboarding','Entitlements':'entitlements','Marketing Suites':'suites'
+};
+const normKeys = arr => (arr||[]).map(s => NORM[s]).filter(Boolean);
+
+/* c = {name, status, funding_m, cap_b, acq_b, also, as_of, conf} */
+const C = (name, status, funding_m, cap_b, acq_b, also) => ({name,status,funding_m,cap_b,acq_b,also:also||[]});
+
+/* Each market: tam_b (ring size), tam_label shown, note, source, leader, competitors */
+const MARKETS = [
+  { key:'advertising', tam_b:138, tam_disp:'$138B', note:'Ad-tech <i>software</i> market (broad ad-tech is ~$720B). Huge spend, but marketer-facing tools stay fragmented — the dollars flow to Google/Meta, not the SaaS.', src:'https://www.grandviewresearch.com/industry-analysis/adtech-market-report', leader:'StackAdapt', comp:[
+    C('StackAdapt','private',535,2.5,null,[]), C('NextRoll (AdRoll)','private',164,null,null,[]),
+    C('Smartly.io','acquired',22.8,null,0.223,['Social']), C('Metadata.io','private',58,null,null,[]),
+    C('Basis (Centro)','private',37.6,0.466,null,[]), C('Skai (Kenshoo)','private',51.7,0.237,null,[]) ] },
+
+  { key:'seo', tam_b:74.6, tam_disp:'$74.6B', note:'SEO software market (Grand View). Broad — includes a long tail. The AI-writing wave (Jasper, Writer) is colliding into it.', src:'https://www.grandviewresearch.com/industry-analysis/seo-software-market-report', leader:'Semrush', comp:[
+    C('Semrush','acquired',null,null,1.9,[]), C('Contentful','acquired',335,3.0,null,[]),
+    C('Writer','private',326,1.9,null,[]), C('Jasper','private',143,1.5,null,[]),
+    C('Ahrefs','bootstrapped',0,1.0,null,[]), C('Moz','acquired',29,null,0.067,[]) ] },
+
+  { key:'suites', tam_b:41, tam_disp:'$41B', note:'The all-in-one / marketing-automation segment — the anchor of the <b>$437B</b> martech umbrella. These incumbents already span many channels (badges) — but none own plans/entitlements.', src:'https://www.grandviewresearch.com/industry-analysis/marketing-technology-martech-market-report', leader:'HubSpot', comp:[
+    C('Salesforce Marketing Cloud','public',null,248,null,['Email','Entitlements','Advertising','Onboarding']),
+    C('Adobe (Marketo)','public',null,147,null,['Email','Advertising','Content & SEO']),
+    C('HubSpot','public',100,15.4,null,['Email','Landing Pages & Forms','Content & SEO','Onboarding','Advertising']),
+    C('Zoho','bootstrapped',7,12.4,null,['Email','Entitlements','Content & SEO']),
+    C('Brevo (Sendinblue)','private',583,1.0,null,['Email','Landing Pages & Forms']) ] },
+
+  { key:'social', tam_b:27, tam_disp:'$27B', note:'Social media management software ($11–31B by scope). Two thin-margin public players lead; the rest is a crowded mid-market.', src:'https://www.grandviewresearch.com/industry-analysis/social-media-management-market-report', leader:'Sprinklr', comp:[
+    C('Sprinklr','public',null,2.29,null,['Marketing Suites']), C('Sprout Social','public',null,1.77,null,[]),
+    C('Hootsuite','private',284,0.69,null,[]), C('Later','private',276,null,null,['Affiliate']),
+    C('Buffer','bootstrapped',4,null,null,[]) ] },
+
+  { key:'entitlements', tam_b:7.15, tam_disp:'$7.2B', note:'Subscription-billing software (~16% CAGR → ~$18B by 2030) — table stakes for any SaaS. Almost every tool here is <b>billing-only</b>; only <b style="color:#FBBF24">Outseta</b> also bundles marketing. Most sit on <b>Stripe</b> as the rail (Poily rides it too, doesn\'t replace it).', src:'https://www.grandviewresearch.com/industry-analysis/subscription-billing-management-market-report', leader:'Chargebee', comp:[
+    {name:'Chargebee',status:'private',funding_m:475,cap_b:3.5,also:[]},
+    {name:'Paddle',status:'private',funding_m:293,cap_b:1.4,also:[]},
+    {name:'Outseta',status:'bootstrapped',funding_m:0,disp:'bootstrapped',barB:0.5,also:['Email','Landing Pages & Forms','Onboarding','Marketing Suites']},
+    {name:'Maxio (Chargify)',status:'private',funding_m:150,also:[]},
+    {name:'FastSpring',status:'private',disp:'PE-owned · MoR',barB:1.0,also:[]},
+    {name:'Recurly',status:'private',disp:'PE-owned',barB:0.9,also:[]},
+    {name:'Lemon Squeezy',status:'acquired',disp:'acq. by Stripe 2024',barB:0.6,also:['Email']},
+    {name:'Pabbly',status:'bootstrapped',funding_m:0,disp:'bootstrapped · flat-fee',barB:0.25,also:['Email']} ] },
+
+  { key:'landing', tam_b:4.2, tam_disp:'$4.2B', note:'Landing-page & form builders ($1–6B by scope). Webflow is the valuation leader; the classic marketer tools (Unbounce, Instapage, Leadpages) have all been acquired.', src:'https://www.datainsightsmarket.com/reports/landing-page-builder-software-1452107', leader:'Webflow', comp:[
+    C('Webflow','private',335,4.0,null,['Content & SEO']), C('Typeform','private',187,0.935,null,[]),
+    C('Unbounce','acquired',91,null,null,['Marketing Suites']), C('Instapage','acquired',39,null,null,['Advertising']),
+    C('Leadpages','acquired',38,null,null,[]), C('Jotform','bootstrapped',0,null,null,[]) ] },
+
+  { key:'affiliate', tam_b:3.25, tam_disp:'$3.3B', note:'Affiliate / partner / referral software. Impact.com is the funded leader; SaaS-native referral tools (Rewardful) hang off the billing layer.', src:'https://www.businessresearchinsights.com/market-reports/partner-marketing-platform-market-115701', leader:'Impact.com', comp:[
+    C('Impact.com','private',376,1.5,null,['Marketing Suites']), C('Awin','private',null,0.43,null,[]),
+    C('PartnerStack','acquired',44,null,null,[]), C('TUNE','acquired',36.4,null,null,[]),
+    C('Everflow','bootstrapped',0,null,null,[]) ] },
+
+  { key:'email', tam_b:2.4, tam_disp:'$2.4B', note:'Pure-play email software ($1.7–2.4B). Small as a standalone market, yet it produced two of martech\'s biggest exits — Mailchimp ($12B) and Klaviyo\'s IPO.', src:'https://www.fortunebusinessinsights.com/email-marketing-software-market-103100', leader:'Mailchimp', comp:[
+    C('Mailchimp (Intuit)','acquired',null,null,12.0,['Landing Pages & Forms','Marketing Suites']),
+    C('Klaviyo','public',778,10.7,null,['Entitlements']), C('Braze','public',175,3.85,null,['Onboarding']),
+    C('ActiveCampaign','private',363,3.0,null,['Marketing Suites','Onboarding']),
+    C('Iterable','private',343,2.0,null,['Onboarding']), C('Kit (ConvertKit)','bootstrapped',0,null,null,[]) ] },
+
+  { key:'onboarding', tam_b:1.84, tam_disp:'$1.8B', note:'Digital adoption / product onboarding (PLG). WalkMe went to SAP for $1.5B; Pendo leads by valuation. Adjacent to activation — a natural Poily extension.', src:'https://www.emergenresearch.com/industry-report/digital-adoption-platform-market', leader:'Pendo', comp:[
+    C('Pendo','private',356,2.6,null,[]), C('WalkMe','acquired',null,null,1.5,[]),
+    C('Whatfix','private',265,0.9,null,[]), C('Appcues','private',47.9,0.28,null,[]),
+    C('Chameleon','private',14.8,null,null,[]) ] },
+];
+
+const POILY = { key:'poily', label:'Poily', color:'#8B5CF6', glow:'#5036b0' };
+
+/* competitor links: name -> {url: site, src: acquisition/press URL} */
+const LINKS = {
+  // Subscriptions
+  'Chargebee':{url:'https://www.chargebee.com'}, 'Paddle':{url:'https://www.paddle.com'},
+  'Outseta':{url:'https://www.outseta.com'}, 'Maxio (Chargify)':{url:'https://www.maxio.com'},
+  'FastSpring':{url:'https://www.fastspring.com'}, 'Recurly':{url:'https://recurly.com'},
+  'Lemon Squeezy':{url:'https://www.lemonsqueezy.com', src:'https://techcrunch.com/2024/07/26/stripe-acquires-payment-processing-startup-lemon-squeezy/'},
+  'Pabbly':{url:'https://www.pabbly.com'},
+  // Email
+  'Mailchimp (Intuit)':{url:'https://mailchimp.com', src:'https://www.cnbc.com/2021/09/13/intuit-to-buy-mailchimp-for-12-billion.html'},
+  'Klaviyo':{url:'https://www.klaviyo.com'}, 'Braze':{url:'https://www.braze.com'},
+  'ActiveCampaign':{url:'https://www.activecampaign.com'}, 'Iterable':{url:'https://iterable.com'},
+  'Customer.io':{url:'https://customer.io'}, 'Kit (ConvertKit)':{url:'https://kit.com'},
+  // Marketing Suites
+  'Salesforce Marketing Cloud':{url:'https://www.salesforce.com/products/marketing/'},
+  'Adobe (Marketo)':{url:'https://business.adobe.com/products/marketo/adobe-marketo.html'},
+  'HubSpot':{url:'https://www.hubspot.com'}, 'Zoho':{url:'https://www.zoho.com'},
+  'Brevo (Sendinblue)':{url:'https://www.brevo.com'},
+  // Social
+  'Sprinklr':{url:'https://www.sprinklr.com'}, 'Sprout Social':{url:'https://sproutsocial.com'},
+  'Hootsuite':{url:'https://www.hootsuite.com'}, 'Later':{url:'https://later.com'}, 'Buffer':{url:'https://buffer.com'},
+  // Content & SEO
+  'Semrush':{url:'https://www.semrush.com', src:'https://www.cnbc.com/2025/11/19/adobe-ai-semrush-stock-deal.html'},
+  'Contentful':{url:'https://www.contentful.com'}, 'Writer':{url:'https://writer.com'},
+  'Jasper':{url:'https://www.jasper.ai'}, 'Ahrefs':{url:'https://ahrefs.com'},
+  'Moz':{url:'https://moz.com', src:'https://www.stocktitan.net/news/JCOM/moz-acquired-by-i-l3k9rv3w2tpa.html'},
+  // Advertising
+  'StackAdapt':{url:'https://www.stackadapt.com'}, 'NextRoll (AdRoll)':{url:'https://www.nextroll.com'},
+  'Smartly.io':{url:'https://www.smartly.io', src:'https://techcrunch.com/2019/12/18/smartly-io-sells-to-providence-equity-partners/'},
+  'Metadata.io':{url:'https://metadata.io'}, 'Basis (Centro)':{url:'https://basis.com'}, 'Skai (Kenshoo)':{url:'https://skai.io'},
+  // Affiliate
+  'Impact.com':{url:'https://impact.com'}, 'Awin':{url:'https://www.awin.com'},
+  'PartnerStack':{url:'https://www.partnerstack.com'},
+  'TUNE':{url:'https://www.tune.com', src:'https://www.geekwire.com/2020/constellation-software-acquires-seattle-marketing-startup-tune/'},
+  'Everflow':{url:'https://www.everflow.io'},
+  // Onboarding
+  'Pendo':{url:'https://www.pendo.io'},
+  'WalkMe':{url:'https://www.walkme.com', src:'https://news.sap.com/2024/09/sap-completes-walkme-acquisition/'},
+  'Whatfix':{url:'https://whatfix.com'}, 'Appcues':{url:'https://www.appcues.com'}, 'Chameleon':{url:'https://www.trychameleon.com'},
+  // Landing & Forms
+  'Webflow':{url:'https://webflow.com'}, 'Typeform':{url:'https://www.typeform.com'},
+  'Unbounce':{url:'https://unbounce.com'}, 'Instapage':{url:'https://instapage.com'},
+  'Leadpages':{url:'https://www.leadpages.com', src:'https://www.businesswire.com/news/home/20200302005029/en/Leadpages-Acquired-By-Redbrick-a-Leading-Canadian-Portfolio-of-Digital-Companies'},
+  'Jotform':{url:'https://www.jotform.com'},
+};
+
+/* ---------- scale metric + labels ---------- */
+function scaleB(c){ return c.acq_b || c.cap_b || (c.funding_m ? c.funding_m/1000 : (c.barB||0.05)); }
+function primaryLabel(c){
+  if (c.disp) return c.disp;
+  if (c.acq_b) return `$${c.acq_b}B acq.`;
+  if (c.cap_b) return c.status==='public' ? `$${c.cap_b}B mkt cap` : `$${c.cap_b}B val.`;
+  if (c.funding_m) return `$${c.funding_m}M raised`;
+  if (c.status==='bootstrapped') return 'bootstrapped';
+  return '—';
+}
+function secondaryLabel(c){ // show funding as secondary when primary is a cap/acq
+  if ((c.acq_b || c.cap_b) && c.funding_m) return `$${c.funding_m}M raised`;
+  if (c.status==='bootstrapped' && !c.funding_m && (c.cap_b)) return 'no VC';
+  return '';
+}
+function catsOf(c, homeKey){ return new Set([homeKey, ...normKeys(c.also)]); }
+
+/* ---------- build nodes ---------- */
+const NODES = [];
+POILY.role='sun'; NODES.push(POILY);
+MARKETS.forEach((m,i) => {
+  m.role='market'; m.cat=CATBYKEY[m.key]; m.color=m.cat.color;
+  m.angle = -Math.PI/2 + i*(2*Math.PI/MARKETS.length);
+  m.rlogic = 16 + Math.sqrt(m.tam_b)*3.0;   // bubble radius from TAM
+  NODES.push(m);
+});
+
+/* ---------- canvas ---------- */
+const canvas=document.getElementById('sky'), ctx=canvas.getContext('2d');
+let W,H,DPR,cx,cy,scale, viewX=0,tX=0;
+function resize(){
+  DPR=Math.min(window.devicePixelRatio||1,2); W=innerWidth; H=innerHeight;
+  canvas.width=W*DPR; canvas.height=H*DPR; ctx.setTransform(DPR,0,0,DPR,0,0);
+  cx=W/2; cy=H/2+18; scale=Math.max(.62,Math.min(Math.min(W,H)/840,1.15)); buildStars();
+}
+addEventListener('resize',resize);
+const ORBIT=250, R_SUN=40;
+
+/* stars */
+let stars=[]; const pr=s=>{const x=Math.sin(s*12.9898+78.233)*43758.5453; return x-Math.floor(x);};
+function buildStars(){ const n=Math.round(W*H/7000); stars=[]; for(let i=0;i<n;i++) stars.push({x:pr(i*3.1)*W,y:pr(i*7.7+1)*H,r:.4+pr(i*2.3)*1.4,ph:pr(i*5.9)*6.28,sp:.6+pr(i*1.7)*1.6}); }
+
+let t=0, hovered=null, selected=null, motion=1;
+const ease=(a,b,k)=>a+(b-a)*k;
+
+function radiusOf(n){ const base = n.role==='sun'? R_SUN : n.rlogic; return base*scale*(1+(n._hl||0)*0.15); }
+
+function update(dt){
+  motion=ease(motion,(hovered||selected)?0:1,.12);
+  for(const m of MARKETS){
+    m.angle += 0.00013*dt*motion;
+    m.x=cx+viewX+Math.cos(m.angle)*ORBIT*scale;
+    m.y=cy+Math.sin(m.angle)*ORBIT*scale;
+  }
+  POILY.x=cx+viewX; POILY.y=cy;
+  for(const n of NODES){ const f = inFocus(n)?1:.2; n._a=ease(n._a==null?f:n._a,f,.12);
+    n._hl=ease(n._hl||0,(n===hovered||n===selected)?1:0,.18); }
+}
+function inFocus(n){ const a=selected||hovered; if(!a) return true; if(a.role==='sun') return true; return n===a||n===POILY; }
+
+function draw(){
+  const g=ctx.createRadialGradient(cx+viewX,cy,40,cx+viewX,cy,Math.max(W,H)*.75);
+  g.addColorStop(0,'#150c26'); g.addColorStop(.55,'#0b0717'); g.addColorStop(1,'#05030b');
+  ctx.fillStyle=g; ctx.fillRect(0,0,W,H);
+  for(const s of stars){ const tw=.45+.55*(.5+.5*Math.sin(t*.001*s.sp+s.ph)); ctx.globalAlpha=tw*.8;
+    ctx.beginPath(); ctx.arc(s.x,s.y,s.r,0,7); ctx.fillStyle='#cfc7ec'; ctx.fill(); }
+  ctx.globalAlpha=1;
+  // orbit ring
+  ctx.save(); ctx.strokeStyle='rgba(160,140,220,.12)'; ctx.setLineDash([2,7]);
+  ctx.beginPath(); ctx.arc(cx+viewX,cy,ORBIT*scale,0,7); ctx.stroke(); ctx.setLineDash([]); ctx.restore();
+  // links Poily -> market (entitlements emphasized = the bridge)
+  for(const m of MARKETS) drawLink(POILY,m);
+  for(const m of MARKETS) drawNode(m);
+  drawNode(POILY);
+}
+function drawLink(a,b){
+  const bridge = b.key==='entitlements';
+  const foc=Math.max(a._hl||0,b._hl||0);
+  const al=(bridge?0.3:0.1)+foc*0.6; const dim=Math.min(a._a==null?1:a._a,b._a==null?1:b._a);
+  ctx.save(); ctx.globalAlpha=dim;
+  const gr=ctx.createLinearGradient(a.x,a.y,b.x,b.y);
+  gr.addColorStop(0,hexA(a.glow||a.color,al)); gr.addColorStop(1,hexA(b.color,al));
+  ctx.strokeStyle=gr; ctx.lineWidth=(bridge?2.4:1.3)*scale;
+  if(bridge){ ctx.shadowColor=hexA(b.color,al); ctx.shadowBlur=10; }
+  ctx.beginPath(); ctx.moveTo(a.x,a.y); ctx.lineTo(b.x,b.y); ctx.stroke(); ctx.restore();
+}
+function drawNode(n){
+  const r=radiusOf(n), a=n._a==null?1:n._a; ctx.save(); ctx.globalAlpha=a;
+  const glow=n.glow||n.color;
+  const haloR=r*(n.role==='sun'?3.4:2.4)*(1+(n.role==='sun'?.06*Math.sin(t*.0016):0));
+  const halo=ctx.createRadialGradient(n.x,n.y,r*.5,n.x,n.y,haloR);
+  halo.addColorStop(0,hexA(glow,.5*(.5+.5*(n._hl||0))+(n.role==='sun'?.24:.13))); halo.addColorStop(1,hexA(glow,0));
+  ctx.fillStyle=halo; ctx.beginPath(); ctx.arc(n.x,n.y,haloR,0,7); ctx.fill();
+  const body=ctx.createRadialGradient(n.x-r*.35,n.y-r*.4,r*.1,n.x,n.y,r);
+  body.addColorStop(0,lighten(n.color,.5)); body.addColorStop(.6,n.color); body.addColorStop(1,darken(n.color,.34));
+  ctx.fillStyle=body; ctx.shadowColor=hexA(glow,.9); ctx.shadowBlur=(n.role==='sun'?38:16)*(.6+.4*(n._hl||0));
+  ctx.beginPath(); ctx.arc(n.x,n.y,r,0,7); ctx.fill();
+  if((n._hl||0)>.02){ ctx.shadowBlur=0; ctx.strokeStyle=hexA('#fff',.7*n._hl); ctx.lineWidth=1.5;
+    ctx.beginPath(); ctx.arc(n.x,n.y,r+5*scale+3*n._hl,0,7); ctx.stroke(); }
+  ctx.restore();
+  // label + TAM
+  ctx.save(); ctx.globalAlpha=a; ctx.textAlign='center'; ctx.textBaseline='top';
+  ctx.fillStyle='#F3EFFB'; ctx.shadowColor='rgba(0,0,0,.85)'; ctx.shadowBlur=6;
+  ctx.font=`${n.role==='sun'?600:600} ${(n.role==='sun'?16:12.5)*Math.min(scale+.2,1.12)}px -apple-system,Segoe UI,Inter,sans-serif`;
+  ctx.fillText(n.role==='sun'?'Poily':n.cat.label, n.x, n.y+r+6*scale);
+  if(n.role==='market'){ ctx.fillStyle=hexA(n.color,.95); ctx.font=`600 ${11*Math.min(scale+.2,1.12)}px -apple-system,Segoe UI,Inter,sans-serif`;
+    ctx.fillText(n.tam_disp, n.x, n.y+r+6*scale+15*scale); }
+  else { ctx.fillStyle='rgba(196,181,253,.9)'; ctx.font=`500 ${11*Math.min(scale+.2,1.12)}px -apple-system,Segoe UI,Inter,sans-serif`;
+    ctx.fillText('unifies all 9 + monetization', n.x, n.y+r+6*scale+16*scale); }
+  ctx.restore();
+}
+
+/* color utils */
+function h2r(h){h=h.replace('#','');if(h.length===3)h=h.split('').map(c=>c+c).join('');const n=parseInt(h,16);return[(n>>16)&255,(n>>8)&255,n&255];}
+function hexA(h,a){const[r,g,b]=h2r(h);return`rgba(${r},${g},${b},${a})`;}
+function lighten(h,k){const[r,g,b]=h2r(h);return`rgb(${Math.round(r+(255-r)*k)},${Math.round(g+(255-g)*k)},${Math.round(b+(255-b)*k)})`;}
+function darken(h,k){const[r,g,b]=h2r(h);return`rgb(${Math.round(r*(1-k))},${Math.round(g*(1-k))},${Math.round(b*(1-k))})`;}
+
+/* hit test + interaction */
+function hit(mx,my){ let best=null,bd=1e9; for(const n of NODES){ const r=radiusOf(n)+6, d=(n.x-mx)**2+(n.y-my)**2; if(d<r*r&&d<bd){bd=d;best=n;} } return best; }
+const tip=document.getElementById('tooltip');
+canvas.addEventListener('mousemove',e=>{ const h=hit(e.clientX,e.clientY); hovered=h; canvas.style.cursor=h?'pointer':'grab';
+  if(!h||h===selected){ tip.style.opacity=0; } else {
+    tip.querySelector('.tt-n').textContent = h.role==='sun'?'Poily — the unifier':h.cat.label;
+    tip.querySelector('.tt-s').textContent = h.role==='sun'?'Owns all 9 channels + monetization':`${h.tam_disp} market · ${h.comp.length} funded players · led by ${h.leader}`;
+    tip.style.left=e.clientX+'px'; tip.style.top=e.clientY+'px'; tip.style.opacity=1; }
+});
+canvas.addEventListener('mouseleave',()=>{hovered=null;tip.style.opacity=0;});
+canvas.addEventListener('click',e=>{ const h=hit(e.clientX,e.clientY); if(h) select(h); else deselect(); });
+addEventListener('keydown',e=>{ if(e.key==='Escape') deselect(); });
+
+/* badge strip */
+function badgeStrip(activeSet){
+  return `<span class="co-badges">`+CATS.map(c=>{
+    const on=activeSet.has(c.key);
+    return `<span class="bdg" title="${c.label}" style="background:${on?c.color:'rgba(255,255,255,.09)'};${on?`box-shadow:0 0 6px ${hexA(c.color,.8)}`:''}"></span>`;
+  }).join('')+`</span>`;
+}
+
+/* panel */
+const panel=document.getElementById('panel'), pbody=document.getElementById('p-body');
+function select(n){
+  selected=n; tip.style.opacity=0;
+  tX = -(Math.min(400, innerWidth*0.94))/2.5;
+  document.getElementById('p-accent').style.background=`linear-gradient(90deg,${n.color},${n.glow||n.color})`;
+  if(n.role==='sun'){ pbody.innerHTML = poilyPanel(); }
+  else { pbody.innerHTML = marketPanel(n); }
+  panel.classList.add('open'); document.getElementById('hint').style.opacity=0;
+}
+function deselect(){ selected=null; tX=0; panel.classList.remove('open'); document.getElementById('hint').style.opacity=1; }
+document.getElementById('p-close').addEventListener('click',deselect);
+
+function marketPanel(m){
+  const maxS=Math.max(...m.comp.map(scaleB));
+  const rows=m.comp.map(c=>{
+    const s=scaleB(c), w=Math.max(.06,Math.sqrt(s/maxS));
+    const sec=secondaryLabel(c);
+    const mk=normKeys(c.also).length;
+    const tag = mk>0 ? `<span style="font-size:10px;color:#FBBF24;margin-left:7px;white-space:nowrap">★ +${mk} mktg</span>` : '';
+    const lk = LINKS[c.name] || {};
+    const nameHtml = lk.url ? `<a class="co-link" href="${lk.url}" target="_blank" rel="noopener">${c.name}</a>` : c.name;
+    const scaleHtml = lk.src ? `<a class="co-link" href="${lk.src}" target="_blank" rel="noopener">${primaryLabel(c)} ↗</a>` : primaryLabel(c);
+    return `<div class="co" style="${mk>0?'box-shadow:inset 3px 0 0 rgba(251,191,36,.6);padding-left:10px;':''}">
+      <div class="co-top"><span class="co-name">${nameHtml}<span class="co-status">${c.status}</span>${tag}</span>
+        <span class="co-scale">${scaleHtml}${sec?` <span class="sec">· ${sec}</span>`:''}</span></div>
+      <div class="co-bar"><i style="width:${(w*100).toFixed(0)}%;background:linear-gradient(90deg,${hexA(m.color,.55)},${m.color})"></i></div>
+      ${badgeStrip(catsOf(c,m.key))}
+    </div>`;
+  }).join('');
+  return `<div class="kick"><span class="kdot" style="color:${m.color};background:${m.color}"></span>Channel</div>
+    <h2>${m.cat.label}</h2>
+    <div class="tamrow"><span class="tam" style="color:${m.color}">${m.tam_disp}</span><span class="taml">market size (TAM)</span></div>
+    <div class="subnote">${m.note} <a href="${m.src}" target="_blank" rel="noopener">source ↗</a></div>
+    <div class="metaline">
+      <div class="m">Leader<b>${m.leader}</b></div>
+      <div class="m">Funded players<b>${m.comp.length}${m.key==='entitlements'?' · only Outseta markets':''}</b></div>
+    </div>
+    <div class="cohead">Who's funded here — scale &amp; channel reach</div>
+    ${rows}`;
+}
+function poilyPanel(){
+  const all=new Set(CATS.map(c=>c.key));
+  return `<div class="kick"><span class="kdot" style="color:${POILY.color};background:${POILY.color}"></span>The unifier</div>
+    <h2>Poily</h2>
+    <div class="tamrow"><span class="tam" style="color:#C4B5FD">$437B</span><span class="taml">martech TAM it plays in</span></div>
+    <p class="thesis">Every ring around Poily is a <b>single-channel</b> field of point tools — well funded, yet siloed. The all-in-one suites (HubSpot, Salesforce, Adobe) span several channels but <span class="hl">don't own your plans</span>. The billing tools (Chargebee, Paddle, Recurly) own money-in but <span class="hl">do zero marketing</span> — only <b style="color:#FBBF24">Outseta</b> bundles both.</p>
+    <p class="thesis">Poily is the only platform that bundles <b>subscriptions + every marketing channel</b> — plan-aware, and built simple for scrappy builders.</p>
+    <div class="cohead" style="margin-top:18px">Poily's channel reach</div>
+    <div class="co"><div class="co-top"><span class="co-name">Poily<span class="co-status">all-in-one + monetization</span></span></div>
+      <div style="margin-top:9px">${badgeStrip(all)}</div>
+      <div style="font-size:11px;color:#948DAE;margin-top:8px">All nine channels lit — plus the <b style="color:#FBBF24">Entitlements</b> ring no marketing tool touches.</div>
+    </div>`;
+}
+
+/* legend */
+const lg=document.getElementById('lgrid');
+lg.innerHTML=CATS.map(c=>`<div class="litem"><span class="lpin" style="color:${c.color};background:${c.color}"></span>${c.label}</div>`).join('');
+
+/* loop */
+let last=0;
+function loop(now){ const dt=Math.min(now-last,60); last=now; t=now; viewX=ease(viewX,tX,.08); update(dt); draw(); requestAnimationFrame(loop); }
+resize(); requestAnimationFrame(loop);
+</script>
+</body>
+</html>
