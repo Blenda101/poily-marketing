@@ -58,7 +58,7 @@ export function renderOgImage() {
               letterSpacing: '-0.025em',
             }}
           >
-            Super Powers for SaaS
+            Superpowers for SaaS
           </span>
           <span
             style={{
