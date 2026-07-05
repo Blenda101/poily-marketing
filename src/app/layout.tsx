@@ -18,7 +18,7 @@ const dmSans = DM_Sans({
   display: 'swap',
 })
 
-const title = 'Poily — The HubSpot for SaaS'
+const title = 'Poily — Super Powers for SaaS'
 const description =
   'Poily is the all-in-one marketing and monetization platform for SaaS — email, social, content, ads, and web, unified with a plan & entitlement builder that connects every campaign to revenue. Join the waitlist.'
 

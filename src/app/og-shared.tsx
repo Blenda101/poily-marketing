@@ -31,7 +31,7 @@ export function renderOgImage() {
           fontFamily: 'sans-serif',
         }}
       >
-        {/* Brand lockup: pin + wordmark */}
+        {/* Brand lockup: shield emblem + wordmark */}
         <div style={{ display: 'flex', alignItems: 'center', gap: 26 }}>
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img src={logoSrc} width={130} height={95} alt="" />
@@ -58,7 +58,7 @@ export function renderOgImage() {
               letterSpacing: '-0.025em',
             }}
           >
-            The HubSpot for SaaS
+            Super Powers for SaaS
           </span>
           <span
             style={{
