@@ -54,7 +54,7 @@ export default function SiteFooter() {
 
         <div className="mt-12 flex flex-col gap-3 border-t border-white/[0.07] pt-6 sm:flex-row sm:items-center sm:justify-between">
           <span className="text-xs text-white/30">&copy; 2026 Poily. All rights reserved.</span>
-          <span className="text-xs text-white/30">The HubSpot for SaaS.</span>
+          <span className="text-xs text-white/30">Superpowers for SaaS.</span>
         </div>
       </div>
     </footer>

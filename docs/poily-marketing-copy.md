@@ -1,6 +1,6 @@
 # Poily marketing site — page copy (for `poily-marketing` repo)
 
-Positioning: **Poily = "the HubSpot for SaaS."** Project the **total package** — all five acquisition channels presented as shipped capability (no "coming soon"). Unique wedge: **plan & entitlement builder** + **closed-loop marketing-to-revenue attribution** (only possible because Poily owns plans + billing + marketing).
+Positioning: **Poily = "Superpowers for SaaS."** Project the **total package** — all five acquisition channels presented as shipped capability (no "coming soon"). Unique wedge: **plan & entitlement builder** + **closed-loop marketing-to-revenue attribution** (only possible because Poily owns plans + billing + marketing).
 
 Brand: violet `#5036b0` (primary / `brand.600`), `#3a2783` (deep / `brand.800`), `#7C3AED` (accent/CTA). Neutrals: cream `#FAF8F4`, mist `#F2F0F8`, fog `#807A93`, ink `#1A1430`.
 
@@ -9,7 +9,7 @@ Brand: violet `#5036b0` (primary / `brand.600`), `#3a2783` (deep / `brand.800`),
 ## `src/app/page.tsx`
 
 ### Hero
-- **Eyebrow:** The HubSpot for SaaS
+- **Eyebrow:** Superpowers for SaaS
 - **Headline:** Run your entire SaaS go-to-market from one platform.
 - **Subhead:** Every marketing channel — email, social, content, ads, and web — unified with the one thing built only for SaaS: a plan & entitlement builder that connects every campaign to the revenue it creates.
 - **Primary CTA:** Join the waitlist
@@ -69,7 +69,7 @@ Poily — every marketing channel, plus the one thing built only for SaaS: your 
 ---
 
 ## `src/app/layout.tsx` — meta
-- **Title:** Poily — The HubSpot for SaaS
+- **Title:** Poily — Superpowers for SaaS
 - **Description:** Poily is the all-in-one marketing and monetization platform for SaaS — email, social, content, ads, and web, unified with a plan & entitlement builder that connects every campaign to revenue. Join the waitlist.
 - **OG URL:** https://poily.com
 

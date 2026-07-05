@@ -1,6 +1,6 @@
 # Poily marketing site
 
-Marketing + waitlist site for **Poily — the HubSpot for SaaS**: every acquisition
+Marketing + waitlist site for **Poily — Superpowers for SaaS**: every acquisition
 channel (email, social, content, ads, web) unified with a plan & entitlement
 builder that closes the loop from campaign to revenue.
 
