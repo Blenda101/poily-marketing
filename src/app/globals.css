@@ -93,3 +93,66 @@
   .flow-path { animation: none; }
   .live-dot { animation: none; }
 }
+
+/* Blog article body — renders the Poily-published content (renderArticleBodyHtml)
+   in poily.com's own type system. On-brand: DM Sans body, Plus Jakarta headings,
+   brand-purple links. */
+.blog-content {
+  font-size: 18px;
+  line-height: 1.75;
+  color: #29233d;
+}
+.blog-content > * + * { margin-top: 1.25em; }
+.blog-content h2,
+.blog-content h3,
+.blog-content h4 {
+  font-family: var(--font-plus-jakarta);
+  font-weight: 700;
+  line-height: 1.25;
+  letter-spacing: -0.01em;
+  color: #1A1430;
+  margin-top: 1.8em;
+}
+.blog-content h2 { font-size: 1.6rem; }
+.blog-content h3 { font-size: 1.3rem; }
+.blog-content h4 { font-size: 1.1rem; }
+.blog-content a {
+  color: #5036B0;
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+.blog-content a:hover { color: #7C3AED; }
+.blog-content strong { color: #1A1430; font-weight: 700; }
+.blog-content ul,
+.blog-content ol { padding-left: 1.4em; }
+.blog-content ul { list-style: disc; }
+.blog-content ol { list-style: decimal; }
+.blog-content li { margin-top: 0.4em; }
+.blog-content blockquote {
+  border-left: 3px solid #7C3AED;
+  padding-left: 1em;
+  color: #5b5470;
+  font-style: italic;
+}
+.blog-content pre {
+  background: #1A1430;
+  color: #ece9f6;
+  padding: 16px 18px;
+  border-radius: 10px;
+  overflow-x: auto;
+  font-size: 0.9em;
+}
+.blog-content :not(pre) > code {
+  background: rgba(80, 54, 176, 0.08);
+  padding: 0.15em 0.4em;
+  border-radius: 5px;
+  font-size: 0.9em;
+}
+.blog-content img,
+.blog-content .post-image img { max-width: 100%; height: auto; border-radius: 10px; }
+.blog-content figure figcaption { font-size: 0.85em; color: #8a8398; margin-top: 0.5em; text-align: center; }
+.blog-content hr { border: 0; border-top: 1px solid #e7e3f0; margin: 2.4em 0; }
+.blog-content .table-wrapper { overflow-x: auto; }
+.blog-content table { border-collapse: collapse; width: 100%; font-size: 0.95em; }
+.blog-content th,
+.blog-content td { border: 1px solid #e7e3f0; padding: 8px 12px; text-align: left; }
