@@ -156,3 +156,32 @@
 .blog-content table { border-collapse: collapse; width: 100%; font-size: 0.95em; }
 .blog-content th,
 .blog-content td { border: 1px solid #e7e3f0; padding: 8px 12px; text-align: left; }
+
+/* In-article CTA capture (form-embed node → /api/content/capture), on-brand. */
+.blog-content .cta-embed {
+  margin: 2.5em 0;
+  border: 1px solid #e7e3f0;
+  border-radius: 14px;
+  background: #F4F1FB;
+  padding: 28px;
+}
+.blog-content .cta-embed-heading {
+  font-family: var(--font-plus-jakarta);
+  font-weight: 700;
+  font-size: 1.25rem;
+  color: #1A1430;
+  margin: 0 0 6px;
+}
+.blog-content .cta-embed-desc { margin: 0 0 16px; color: #5b5470; }
+.blog-content .cta-embed-form { display: flex; gap: 8px; flex-wrap: wrap; }
+.blog-content .cta-embed-form input {
+  flex: 1; min-width: 220px; padding: 11px 13px;
+  border: 1px solid #d8d2ea; border-radius: 9px; font-size: 1rem;
+}
+.blog-content .cta-embed-form button {
+  padding: 11px 22px; border: 0; border-radius: 9px;
+  background: #5036B0; color: #fff; font-weight: 600; cursor: pointer;
+}
+.blog-content .cta-embed-form button:hover { background: #7C3AED; }
+.blog-content .cta-embed-form button:disabled { opacity: 0.6; cursor: default; }
+.blog-content .cta-embed-status { margin: 10px 0 0; font-size: 0.9rem; color: #5036B0; min-height: 1.2em; }
