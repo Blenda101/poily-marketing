@@ -2,7 +2,7 @@ import type { Metadata } from 'next'
 import SiteNav from '@/components/SiteNav'
 import SiteFooter from '@/components/SiteFooter'
 import ChannelCard, { ChannelLegend } from '@/components/ChannelCard'
-import { acquisitionChannels, activationChannels, messagingChannels, FAMILIES } from '@/lib/channels'
+import { acquisitionChannels, activationChannels, FAMILIES } from '@/lib/channels'
 
 export const metadata: Metadata = {
   title: 'Channels — every marketing channel, one workspace | Poily',
@@ -40,13 +40,6 @@ export default function ChannelsIndexPage() {
 
         {/* Activation */}
         <ChannelGroup family="activation" channels={activationChannels} className="bg-cream" />
-
-        {/* Messaging */}
-        <ChannelGroup
-          family="messaging"
-          channels={messagingChannels}
-          className="bg-sand border-y border-line"
-        />
       </main>
       <SiteFooter />
     </>
@@ -69,9 +62,7 @@ function ChannelGroup({
         <div className="flex items-baseline gap-3">
           <span
             className={`h-2.5 w-2.5 rounded-full ${
-              { acquisition: 'bg-brand', activation: 'bg-emerald-500', messaging: 'bg-amber-500' }[
-                family
-              ]
+              family === 'acquisition' ? 'bg-brand' : 'bg-emerald-500'
             }`}
           />
           <h2 className="font-display text-[clamp(22px,2.6vw,32px)] font-bold tracking-[-0.01em] text-ink">

@@ -4,7 +4,6 @@ import type { Channel, Family } from '@/lib/channels'
 const tagStyles: Record<Family, { wrap: string; dot: string; label: string }> = {
   acquisition: { wrap: 'text-brand bg-brand-tint', dot: 'bg-brand', label: 'Acquisition' },
   activation: { wrap: 'text-emerald-700 bg-emerald-50', dot: 'bg-emerald-500', label: 'Activation' },
-  messaging: { wrap: 'text-amber-700 bg-amber-50', dot: 'bg-amber-500', label: 'Messaging' },
 }
 
 export function FamilyTag({ family }: { family: Family }) {
@@ -26,9 +25,6 @@ export function ChannelLegend() {
       </span>
       <span className="inline-flex items-center gap-1.5">
         <span className="h-2 w-2 rounded-full bg-emerald-500" /> Activation &amp; lifecycle — engage them inside
-      </span>
-      <span className="inline-flex items-center gap-1.5">
-        <span className="h-2 w-2 rounded-full bg-amber-500" /> Messaging — reach them on every surface
       </span>
     </div>
   )

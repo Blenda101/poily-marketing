@@ -133,11 +133,10 @@ export default function HomePage() {
             </div>
 
             <div className="mt-8 space-y-9 reveal reveal-d1">
-              {(['acquisition', 'activation', 'messaging'] as const).map((fam) => {
+              {(['acquisition', 'activation'] as const).map((fam) => {
                 const dot = {
                   acquisition: 'bg-brand',
                   activation: 'bg-emerald-500',
-                  messaging: 'bg-amber-500',
                 }[fam]
                 return (
                   <div key={fam}>
