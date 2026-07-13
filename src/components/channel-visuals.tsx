@@ -1,4 +1,4 @@
-import { Check, Lock } from 'lucide-react'
+import { Check, Lock, Bell } from 'lucide-react'
 import type { ComponentType } from 'react'
 
 /**
@@ -546,12 +546,121 @@ function AffiliateVisual() {
   )
 }
 
+function PushVisual() {
+  return (
+    <div className="relative">
+      <div aria-hidden className="absolute -inset-4 -z-10 rounded-[32px] bg-brand-tint/60 opacity-70 blur-2xl" />
+      <div className="relative overflow-hidden rounded-tile border border-line-violet bg-white shadow-tile-lg">
+        <div className="flex items-center justify-between border-b border-line-violet bg-mist/60 px-5 py-3.5">
+          <div className="flex items-center gap-2.5">
+            <span className="relative flex h-2 w-2">
+              <span className="live-dot absolute inline-flex h-full w-full rounded-full bg-emerald-500" />
+              <span className="relative inline-flex h-2 w-2 rounded-full bg-emerald-500" />
+            </span>
+            <span className="text-[13px] font-medium text-ink">They’ve left the app</span>
+          </div>
+          <span className="rounded-full bg-brand-tint px-2.5 py-1 text-[11px] font-semibold text-brand">
+            trigger: went quiet
+          </span>
+        </div>
+        <div className="grid-lines space-y-3 p-5">
+          {/* escalation path */}
+          <div className="flex items-center gap-1.5 text-[11px]">
+            {['In-app', 'Wait 3d', 'Push'].map((s, i) => (
+              <div key={s} className="flex items-center gap-1.5">
+                <span
+                  className={`rounded-md px-2 py-1 font-medium ${
+                    i === 2
+                      ? 'border border-brand-mid bg-brand-tint text-brand'
+                      : 'border border-line bg-cream text-ink-mid'
+                  }`}>
+                  {s}
+                </span>
+                {i < 2 && <span className="text-brand-accent">→</span>}
+              </div>
+            ))}
+            <span className="ml-auto text-[10px] text-ink-faint">escalated</span>
+          </div>
+
+          {/* push notification banner */}
+          <div className="rounded-2xl border border-brand-mid bg-white p-4 shadow-tile-lg">
+            <div className="flex items-center gap-2.5">
+              <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-brand text-white">
+                <Bell size={15} strokeWidth={2.5} />
+              </span>
+              <div className="min-w-0 flex-1">
+                <div className="flex items-center justify-between">
+                  <p className="text-[12px] font-semibold text-ink">Acme</p>
+                  <span className="text-[10px] text-ink-faint">now</span>
+                </div>
+                <p className="truncate text-[12px] text-ink-soft">Your workspace is waiting — finish in 2 steps</p>
+              </div>
+            </div>
+          </div>
+          <p className="text-center text-[11px] font-medium text-ink-faint">
+            Reaches them off-app → still tied to their plan
+          </p>
+        </div>
+      </div>
+    </div>
+  )
+}
+
+function SmsVisual() {
+  return (
+    <div className="relative">
+      <div aria-hidden className="absolute -inset-4 -z-10 rounded-[32px] bg-brand-tint/60 opacity-70 blur-2xl" />
+      <div className="relative overflow-hidden rounded-tile border border-line-violet bg-white shadow-tile-lg">
+        <div className="flex items-center justify-between border-b border-line-violet bg-mist/60 px-5 py-3.5">
+          <div className="flex items-center gap-2.5">
+            <span className="relative flex h-2 w-2">
+              <span className="live-dot absolute inline-flex h-full w-full rounded-full bg-emerald-500" />
+              <span className="relative inline-flex h-2 w-2 rounded-full bg-emerald-500" />
+            </span>
+            <span className="text-[13px] font-medium text-ink">Payment failed</span>
+          </div>
+          <span className="rounded-full bg-brand-tint px-2.5 py-1 text-[11px] font-semibold text-brand">
+            trigger: dunning
+          </span>
+        </div>
+        <div className="grid-lines space-y-3 p-5">
+          {/* SMS bubble */}
+          <div className="rounded-2xl border border-line-violet bg-white p-4">
+            <div className="max-w-[85%] rounded-2xl rounded-tl-sm bg-mist px-3.5 py-2.5">
+              <p className="text-[12px] leading-snug text-ink">
+                Acme: your payment didn’t go through. Tap to update your card and keep Pro —
+                <span className="text-brand"> acme.io/fix</span>
+              </p>
+            </div>
+            <p className="mt-1.5 text-[10px] text-ink-faint">SMS · from your number</p>
+          </div>
+
+          {/* recovered MRR */}
+          <div className="flex items-end justify-between rounded-2xl border border-brand-mid bg-brand-tint/40 p-4">
+            <div>
+              <p className="text-[11px] text-ink-faint">Recovered</p>
+              <p className="tabular text-[20px] font-extrabold leading-none text-ink">
+                $588<span className="ml-1 text-[11px] text-emerald-600">MRR</span>
+              </p>
+            </div>
+            <span className="rounded-md bg-emerald-50 px-2 py-1 text-[10px] font-semibold text-emerald-600">
+              subscription saved
+            </span>
+          </div>
+        </div>
+      </div>
+    </div>
+  )
+}
+
 export const channelVisuals: Record<string, ComponentType> = {
   email: EmailVisual,
   'landing-pages': LandingVisual,
   forms: FormsVisual,
   onboarding: OnboardingVisual,
   'in-app-messaging': InAppVisual,
+  'push-notifications': PushVisual,
+  sms: SmsVisual,
   social: SocialVisual,
   'content-seo': ContentVisual,
   advertising: AdsVisual,

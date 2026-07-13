@@ -30,6 +30,8 @@ import {
   Gauge,
   LayoutDashboard,
   DollarSign,
+  Bell,
+  MessageCircle,
 } from 'lucide-react'
 import type { LucideIcon } from 'lucide-react'
 
@@ -809,7 +811,7 @@ export const CHANNELS: Channel[] = [
     replaces: 'Intercom (in-app) · Appcues · Pendo · Userpilot · Chameleon',
     unified:
       'The difference: a paywall fires exactly when a user hits a gate — priced to their plan, one click to upgrade, attributed to MRR. It’s the in-product arm of the closed loop, reaching people at the precise moment of intent instead of in an email they’ll ignore.',
-    related: ['onboarding', 'email', 'landing-pages'],
+    related: ['push-notifications', 'sms', 'email'],
     featureSections: [
       {
         icon: MessageSquare,
@@ -877,12 +879,198 @@ export const CHANNELS: Channel[] = [
       },
     ],
   },
+  {
+    slug: 'push-notifications',
+    name: 'Push notifications',
+    family: 'activation',
+    icon: Bell,
+    card: 'Web and mobile push that re-engages users after they’ve left.',
+    seoTitle: 'Push Notifications for SaaS — Web & Mobile — Poily',
+    seoDescription:
+      'Web and mobile push for SaaS, triggered by real usage and entitlements and escalated from in-app — reaching users off-app at the moment of intent, attributed to MRR.',
+    h1: 'Push notifications that reach users after they’ve left.',
+    keyword: 'Push notifications',
+    intro:
+      'Web and mobile push — announcements, re-engagement, and escalation for when a user isn’t in the product, fired by the same triggers as everything else.',
+    standalone:
+      'A visual builder for web and mobile push, with audience targeting, scheduling, delivery on the major push services, A/B testing, and per-message stats.',
+    bullets: [
+      'Web and mobile push from one builder — no separate service to wire up.',
+      'Triggered by live behavior and entitlements, in real time.',
+      'Escalates from in-app and lands in the in-app inbox when enabled.',
+    ],
+    replaces: 'OneSignal · Braze · Airship · Firebase (FCM)',
+    unified:
+      'The difference: push fires off the same event stream and entitlements as every other channel, and escalates from an in-app message inside one journey — so you reach a user the moment they’ve left, still tied to their plan and still attributed to the MRR it drives. Not a standalone blaster that knows nothing about your product.',
+    related: ['in-app-messaging', 'sms', 'email'],
+    featureSections: [
+      {
+        icon: Bell,
+        title: 'Web & mobile push',
+        body: 'Reach users on the web and on their device from one composer — announcements, re-engagement, and time-sensitive nudges.',
+      },
+      {
+        icon: Filter,
+        title: 'Behavior-triggered targeting',
+        body: 'Fire on live behavior and entitlements in real time — “Pro trials who went quiet,” not a stale exported list.',
+      },
+      {
+        icon: GitBranch,
+        title: 'Escalates from in-app',
+        body: 'A journey shows an in-app message first, then escalates to push once the user has left the product — one flow, not two tools.',
+      },
+      {
+        icon: Inbox,
+        title: 'Lands in the inbox',
+        body: 'When the owner enables it, a push also lands in the in-app inbox, so nothing is missed while a user was offline.',
+      },
+      {
+        icon: Send,
+        title: 'Delivery, wrapped',
+        body: 'Delivery runs on the major push services (APNs/FCM) under the hood — the reach without wiring up and maintaining the pipes.',
+      },
+      {
+        icon: LineChart,
+        title: 'Attributed to MRR',
+        body: 'Because the tap and the subscription live on one record, you see the revenue each push actually drove — not just open rates.',
+      },
+    ],
+    comparison: {
+      theirLabel: 'push tool',
+      rows: [
+        { label: 'Web & mobile push', them: true, us: true },
+        { label: 'Behavior-based targeting', them: true, us: true },
+        { label: 'A/B testing & scheduling', them: true, us: true },
+        { label: 'Knows the user’s plan & entitlements', them: false, us: true },
+        { label: 'Escalates from an in-app message', them: false, us: true },
+        { label: 'Conversions attributed to MRR', them: false, us: true },
+        { label: 'One customer record across every channel', them: false, us: true },
+      ],
+    },
+    faq: [
+      {
+        q: 'Web push, mobile push, or both?',
+        a: 'Both — send web push and mobile push from the same builder, with delivery handled on the major push services under the hood.',
+      },
+      {
+        q: 'How is this different from OneSignal or Braze?',
+        a: 'Those deliver push but don’t know your plans, billing, or the message you just showed in-app. Poily fires push off the same entitlements and event stream, escalates it from an in-app message in one journey, and attributes conversions to MRR.',
+      },
+      {
+        q: 'Can push escalate from an in-app message?',
+        a: 'Yes — that’s the point. A journey shows an in-app message while the user is in the product and escalates to push once they’ve left, all on one customer record.',
+      },
+      {
+        q: 'Do I need my own push infrastructure?',
+        a: 'No — delivery runs on the major push services (APNs/FCM) under the hood. You get the reach without building or maintaining the pipes.',
+      },
+      {
+        q: 'Is push available on every plan?',
+        a: 'Push is part of the Messaging family and is enabled per plan and per tenant — a strong fit for mobile-first and push-capable products.',
+      },
+    ],
+  },
+  {
+    slug: 'sms',
+    name: 'SMS',
+    family: 'activation',
+    icon: MessageCircle,
+    card: 'Text for the highest-intent moments — led by payment recovery.',
+    seoTitle: 'SMS for SaaS — Payment Recovery & Alerts — Poily',
+    seoDescription:
+      'SMS for SaaS that fires from real billing events — led by failed-payment recovery — and ties every recovered subscription to MRR. Bring your own number.',
+    h1: 'SMS that follows the money.',
+    keyword: 'SMS',
+    intro:
+      'Text messaging for the highest-reach, highest-intent moments — led by dunning and failed-payment recovery, plus high-value alerts.',
+    standalone:
+      'A builder for transactional and lifecycle SMS, with audience targeting, consent and opt-out handling, delivery on the major carriers, and per-message stats.',
+    bullets: [
+      'Fires from real billing and usage events — not a disconnected blast list.',
+      'Led by failed-payment recovery: “your payment failed, tap to fix.”',
+      'Bring your own number, with consent and opt-out handled for you.',
+    ],
+    replaces: 'Twilio (raw) · Attentive · Klaviyo (SMS) · Postscript',
+    unified:
+      'The difference: an SMS fires from the same billing events Poily already owns, so a failed-payment text links straight to the subscription it recovers — and the recovered MRR is credited to the journey. It’s the top rung of the escalation ladder, reserved for what actually moves money.',
+    related: ['in-app-messaging', 'push-notifications', 'email'],
+    featureSections: [
+      {
+        icon: DollarSign,
+        title: 'Failed-payment recovery',
+        body: 'The headline use case: when a renewal fails, a “tap to fix” text recovers the subscription — and the MRR is credited back to the journey.',
+      },
+      {
+        icon: GitBranch,
+        title: 'The top of the ladder',
+        body: 'The last escalation step after in-app and push — reserved for the highest-intent, highest-value moments, not everyday broadcast.',
+      },
+      {
+        icon: ShieldCheck,
+        title: 'Consent & opt-out, handled',
+        body: 'STOP/HELP opt-out, consent capture, and an audit trail come from the shared preference center — one consent record across every channel.',
+      },
+      {
+        icon: Send,
+        title: 'Bring your own number',
+        body: 'Register your own number (10DLC); Poily wraps the carrier and supplies the compliance plumbing, so deliverability is handled without a separate stack.',
+      },
+      {
+        icon: Sparkles,
+        title: 'AI recovery copy',
+        body: 'Draft recovery and alert copy on-brand and optimize timing — grounded in your data, not a generic template.',
+      },
+      {
+        icon: LineChart,
+        title: 'Measured in recovered MRR',
+        body: 'Every text ties to the subscription it recovered or expanded, so SMS is measured in revenue — not delivery receipts.',
+      },
+    ],
+    comparison: {
+      theirLabel: 'SMS tool',
+      rows: [
+        { label: 'Transactional & lifecycle SMS', them: true, us: true },
+        { label: 'Consent & opt-out handling', them: true, us: true },
+        { label: 'Delivery via major carriers', them: true, us: true },
+        { label: 'Fires from real billing events', them: false, us: true },
+        { label: 'Recovery texts tied to the subscription', them: false, us: true },
+        { label: 'Recovered revenue attributed to MRR', them: false, us: true },
+        { label: 'One customer record across every channel', them: false, us: true },
+      ],
+    },
+    faq: [
+      {
+        q: 'What’s SMS best used for?',
+        a: 'The highest-intent moments — above all failed-payment recovery (“your payment failed, tap to fix”), plus high-value alerts. It’s the top rung of the escalation ladder, not an everyday broadcast channel.',
+      },
+      {
+        q: 'How is this different from Twilio or Attentive?',
+        a: 'Raw SMS tools send texts but don’t know your billing. Poily fires SMS from the same billing events it owns, so a recovery text links straight to the subscription it saves — and the recovered MRR is credited to the journey.',
+      },
+      {
+        q: 'Do I bring my own number?',
+        a: 'Yes — you register your own number (10DLC) and own consent; Poily wraps the carrier and supplies the consent-capture, opt-out (STOP/HELP), and audit plumbing via the shared preference center.',
+      },
+      {
+        q: 'How do you handle consent and compliance?',
+        a: 'Consent capture and STOP/HELP opt-out are built into the shared preference center — one consent record across every channel, with a full audit trail.',
+      },
+      {
+        q: 'Is SMS included in every plan?',
+        a: 'SMS is a premium opt-in surface — a fit for teams that want to recover revenue and reach users on the highest-intent channel.',
+      },
+    ],
+  },
 ]
 
 export const channelBySlug = (slug: string) => CHANNELS.find((c) => c.slug === slug)
 
 export const acquisitionChannels = CHANNELS.filter((c) => c.family === 'acquisition')
 export const activationChannels = CHANNELS.filter((c) => c.family === 'activation')
+
+/** The Messaging family — three sibling channels (label only; each ships as its own channel). */
+export const MESSAGING_SLUGS = ['in-app-messaging', 'push-notifications', 'sms']
+export const messagingChannels = CHANNELS.filter((c) => MESSAGING_SLUGS.includes(c.slug))
 
 /** All features grouped by category — powers the shared mega-footer. */
 export type FooterLink = { label: string; href: string }
@@ -893,7 +1081,13 @@ export const FOOTER_GROUPS: { title: string; links: FooterLink[] }[] = [
   },
   {
     title: 'Activation & lifecycle',
-    links: activationChannels.map((c) => ({ label: c.name, href: `/channels/${c.slug}` })),
+    links: activationChannels
+      .filter((c) => !MESSAGING_SLUGS.includes(c.slug))
+      .map((c) => ({ label: c.name, href: `/channels/${c.slug}` })),
+  },
+  {
+    title: 'Messaging',
+    links: messagingChannels.map((c) => ({ label: c.name, href: `/channels/${c.slug}` })),
   },
   {
     title: 'Monetization',
