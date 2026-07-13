@@ -22,7 +22,7 @@ import WaitlistForm from '@/components/WaitlistForm'
 import ScrollReveal from '@/components/ScrollReveal'
 import SiteFooter from '@/components/SiteFooter'
 import ChannelCard, { ChannelLegend } from '@/components/ChannelCard'
-import { CHANNELS } from '@/lib/channels'
+import { CHANNELS, FAMILIES } from '@/lib/channels'
 
 export default function HomePage() {
   return (
@@ -103,7 +103,7 @@ export default function HomePage() {
           </div>
         </section>
 
-        {/* ──────────────────── Channels (3×3, two families) ──────────────────── */}
+        {/* ──────────────────── Channels (grouped by family) ──────────────────── */}
         <section id="channels" className="bg-sand border-y border-line">
           <div className="max-w-shell mx-auto px-5 sm:px-8 py-20 lg:py-28">
             <div className="reveal flex flex-col gap-6 lg:flex-row lg:items-end lg:justify-between">
@@ -132,10 +132,29 @@ export default function HomePage() {
               <ChannelLegend />
             </div>
 
-            <div className="mt-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-3 reveal reveal-d1">
-              {CHANNELS.map((channel) => (
-                <ChannelCard key={channel.slug} channel={channel} />
-              ))}
+            <div className="mt-8 space-y-9 reveal reveal-d1">
+              {(['acquisition', 'activation', 'messaging'] as const).map((fam) => {
+                const dot = {
+                  acquisition: 'bg-brand',
+                  activation: 'bg-emerald-500',
+                  messaging: 'bg-amber-500',
+                }[fam]
+                return (
+                  <div key={fam}>
+                    <div className="flex items-baseline gap-2.5">
+                      <span className={`h-2 w-2 rounded-full ${dot}`} />
+                      <h3 className="font-display text-[13px] font-bold uppercase tracking-[0.08em] text-ink-soft">
+                        {FAMILIES[fam].label}
+                      </h3>
+                    </div>
+                    <div className="mt-4 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+                      {CHANNELS.filter((c) => c.family === fam).map((channel) => (
+                        <ChannelCard key={channel.slug} channel={channel} />
+                      ))}
+                    </div>
+                  </div>
+                )
+              })}
             </div>
           </div>
         </section>

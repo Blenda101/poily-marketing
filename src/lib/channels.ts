@@ -35,11 +35,12 @@ import {
 } from 'lucide-react'
 import type { LucideIcon } from 'lucide-react'
 
-export type Family = 'acquisition' | 'activation'
+export type Family = 'acquisition' | 'activation' | 'messaging'
 
 export const FAMILIES: Record<Family, { label: string; blurb: string }> = {
   acquisition: { label: 'Acquisition', blurb: 'Bring users to the door.' },
   activation: { label: 'Activation & lifecycle', blurb: 'Engage them inside the product.' },
+  messaging: { label: 'Messaging', blurb: 'Reach them on every surface — in-app, push, SMS.' },
 }
 
 export type FeatureSection = { icon: LucideIcon; title: string; body: string }
@@ -791,7 +792,7 @@ export const CHANNELS: Channel[] = [
   {
     slug: 'in-app-messaging',
     name: 'In-app messaging',
-    family: 'activation',
+    family: 'messaging',
     icon: MessageSquare,
     card: 'Modals, banners, tooltips, and an inbox — fired by live behavior.',
     seoTitle: 'In-App Messaging & Contextual Paywalls for SaaS — Poily',
@@ -882,7 +883,7 @@ export const CHANNELS: Channel[] = [
   {
     slug: 'push-notifications',
     name: 'Push notifications',
-    family: 'activation',
+    family: 'messaging',
     icon: Bell,
     card: 'Web and mobile push that re-engages users after they’ve left.',
     seoTitle: 'Push Notifications for SaaS — Web & Mobile — Poily',
@@ -973,7 +974,7 @@ export const CHANNELS: Channel[] = [
   {
     slug: 'sms',
     name: 'SMS',
-    family: 'activation',
+    family: 'messaging',
     icon: MessageCircle,
     card: 'Text for the highest-intent moments — led by payment recovery.',
     seoTitle: 'SMS for SaaS — Payment Recovery & Alerts — Poily',
@@ -1068,9 +1069,8 @@ export const channelBySlug = (slug: string) => CHANNELS.find((c) => c.slug === s
 export const acquisitionChannels = CHANNELS.filter((c) => c.family === 'acquisition')
 export const activationChannels = CHANNELS.filter((c) => c.family === 'activation')
 
-/** The Messaging family — three sibling channels (label only; each ships as its own channel). */
-export const MESSAGING_SLUGS = ['in-app-messaging', 'push-notifications', 'sms']
-export const messagingChannels = CHANNELS.filter((c) => MESSAGING_SLUGS.includes(c.slug))
+/** The Messaging family — three sibling channels (in-app, push, SMS). */
+export const messagingChannels = CHANNELS.filter((c) => c.family === 'messaging')
 
 /** All features grouped by category — powers the shared mega-footer. */
 export type FooterLink = { label: string; href: string }
@@ -1081,9 +1081,7 @@ export const FOOTER_GROUPS: { title: string; links: FooterLink[] }[] = [
   },
   {
     title: 'Activation & lifecycle',
-    links: activationChannels
-      .filter((c) => !MESSAGING_SLUGS.includes(c.slug))
-      .map((c) => ({ label: c.name, href: `/channels/${c.slug}` })),
+    links: activationChannels.map((c) => ({ label: c.name, href: `/channels/${c.slug}` })),
   },
   {
     title: 'Messaging',
