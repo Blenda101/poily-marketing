@@ -5,9 +5,9 @@ import Link from 'next/link'
 import { useEffect, useState } from 'react'
 
 const links = [
-  { label: 'Channels', href: '#channels' },
-  { label: 'Platform', href: '#platform' },
-  { label: 'How it works', href: '#how-it-works' },
+  { label: 'Channels', href: '/#channels' },
+  { label: 'Platform', href: '/#platform' },
+  { label: 'How it works', href: '/#how-it-works' },
 ]
 
 export default function SiteNav() {
@@ -54,7 +54,7 @@ export default function SiteNav() {
 
         <div className="flex items-center gap-2">
           <a
-            href="#waitlist"
+            href="/#waitlist"
             className="hidden sm:inline-flex items-center bg-brand hover:bg-brand-deep text-white text-sm font-semibold px-5 py-2.5 rounded-full transition-colors">
             Join the waitlist
           </a>
@@ -86,7 +86,7 @@ export default function SiteNav() {
             </a>
           ))}
           <a
-            href="#waitlist"
+            href="/#waitlist"
             onClick={() => setMenuOpen(false)}
             className="mt-3 inline-flex items-center justify-center bg-brand text-white text-base font-semibold px-5 py-3 rounded-full">
             Join the waitlist
