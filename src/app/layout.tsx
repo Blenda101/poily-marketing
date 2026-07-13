@@ -1,5 +1,6 @@
 import type { Metadata, Viewport } from 'next'
 import { Plus_Jakarta_Sans, DM_Sans } from 'next/font/google'
+import Script from 'next/script'
 import './globals.css'
 
 const plusJakarta = Plus_Jakarta_Sans({
@@ -87,7 +88,11 @@ export const viewport: Viewport = {
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="en" className={`${plusJakarta.variable} ${dmSans.variable}`}>
-      <body>{children}</body>
+      <body>
+        {children}
+        {/* Poily forms SDK — powers the native waitlist capture (data lands in app.poily.com) */}
+        <Script src="https://forms.poily.com/sdk.js" strategy="afterInteractive" />
+      </body>
     </html>
   )
 }
