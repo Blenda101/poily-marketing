@@ -17,16 +17,28 @@ const CHALLENGES = [
   'All of the above',
 ]
 
-async function postForm(formName: string, data: Record<string, string>) {
-  // Submits to Netlify Forms (registered at build via public/__forms.html).
-  // Local `next dev` returns 405 for this POST; it works on the deployed site.
-  const body = new URLSearchParams({ 'form-name': formName, 'bot-field': '', ...data }).toString()
-  const res = await fetch('/__forms.html', {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-    body,
-  })
-  if (!res.ok) throw new Error(`Form submission failed (${res.status})`)
+// The waitlist form was created in Poily via Import-from-site (slug below); we bind to it.
+const POILY_SLUG = 'poily-superpowers-for-saas'
+
+declare global {
+  interface Window {
+    Poily?: {
+      submit: (
+        slug: string,
+        data: Record<string, string>,
+        opts?: { placement?: string; attribution?: boolean }
+      ) => Promise<{ id: string }>
+    }
+  }
+}
+
+// Submits to Poily via the native SDK (forms.poily.com/sdk.js, loaded in the root layout).
+// Attribution (utm/referrer/landing) is captured automatically from the page. Note: only
+// captures on the real poily.com origin — localhost / *.netlify.app 403 (unknown_origin).
+async function poilySubmit(data: Record<string, string>, placement: string) {
+  const Poily = typeof window !== 'undefined' ? window.Poily : undefined
+  if (!Poily?.submit) throw new Error('Poily SDK not loaded yet')
+  await Poily.submit(POILY_SLUG, data, { placement })
 }
 
 export default function WaitlistForm() {
@@ -60,13 +72,10 @@ export default function WaitlistForm() {
     setError(null)
     setStatus('submitting')
     try {
-      await postForm('waitlist', {
-        source: 'homepage-waitlist',
-        first_name: nameVal,
-        email: emailVal,
-        saas_url: saasUrl.trim(),
-        role,
-      })
+      await poilySubmit(
+        { first_name: nameVal, email: emailVal, saas_url: saasUrl.trim(), role },
+        'waitlist'
+      )
       setStatus('success')
     } catch {
       setStatus('error')
@@ -78,11 +87,10 @@ export default function WaitlistForm() {
     setProfileError(null)
     setProfileStatus('submitting')
     try {
-      await postForm('waitlist-profile', {
-        email: email.trim(),
-        team_size: teamSize,
-        challenge,
-      })
+      await poilySubmit(
+        { email: email.trim(), team_size: teamSize, challenge },
+        'waitlist_profile'
+      )
       setProfileStatus('done')
     } catch {
       setProfileStatus('idle')
