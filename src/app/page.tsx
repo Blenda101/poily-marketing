@@ -42,7 +42,7 @@ export default function HomePage() {
             {/* copy */}
             <div className="lg:col-span-6">
               <span className="inline-flex items-center gap-2 text-xs font-semibold tracking-[0.14em] uppercase text-brand bg-brand-tint border border-line-violet rounded-full px-3.5 py-1.5">
-                Superpowers for SaaS
+                GTM Superpower for SaaS
               </span>
 
               <h1 className="mt-6 font-display text-[clamp(38px,5.2vw,68px)] font-extrabold leading-[1.04] tracking-[-0.02em] text-ink">
