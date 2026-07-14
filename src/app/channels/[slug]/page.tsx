@@ -5,7 +5,7 @@ import { Check, ArrowRight, ChevronDown } from 'lucide-react'
 import SiteNav from '@/components/SiteNav'
 import SiteFooter from '@/components/SiteFooter'
 import ChannelCard, { FamilyTag } from '@/components/ChannelCard'
-import { channelVisuals } from '@/components/channel-visuals'
+import { channelVisuals, flavorVisuals } from '@/components/channel-visuals'
 import { CHANNELS, channelBySlug, FAMILIES } from '@/lib/channels'
 
 /** Highlight the channel's keyword within the H1 in brand violet. */
@@ -168,6 +168,65 @@ export default function ChannelDetailPage({ params }: { params: { slug: string }
                     <p className="mt-1.5 text-[14px] leading-relaxed text-ink-mid">{f.body}</p>
                   </div>
                 ))}
+              </div>
+            </div>
+          </section>
+        )}
+
+        {/* ── flavors (stacked sub-surfaces, e.g. Messaging → in-app / push / SMS) ── */}
+        {channel.flavors && channel.flavors.length > 0 && (
+          <section className="bg-cream">
+            <div className="mx-auto max-w-shell px-5 py-16 sm:px-8 lg:py-20">
+              <div className="max-w-2xl">
+                <span className="text-xs font-semibold uppercase tracking-[0.14em] text-brand">
+                  Three flavors
+                </span>
+                <h2 className="mt-3 font-display text-[clamp(24px,3vw,38px)] font-bold tracking-[-0.015em] text-ink leading-[1.1]">
+                  One channel, three ways to reach them.
+                </h2>
+                <p className="mt-4 text-[16px] leading-relaxed text-ink-mid">
+                  Progressive native-device reach — in the product, on their device, or on any phone —
+                  escalated in a single journey.
+                </p>
+              </div>
+              <div className="mt-12 space-y-16">
+                {channel.flavors.map((flavor, i) => {
+                  const FIcon = flavor.icon
+                  const FVisual = flavorVisuals[flavor.key]
+                  const flip = i % 2 === 1
+                  return (
+                    <div key={flavor.key} className="grid items-center gap-10 lg:grid-cols-12">
+                      <div className={`lg:col-span-6 ${flip ? 'lg:order-2 lg:pl-4' : ''}`}>
+                        <div className="flex items-center gap-3">
+                          <span className="flex h-11 w-11 items-center justify-center rounded-2xl bg-brand-tint text-brand">
+                            <FIcon size={22} strokeWidth={2} />
+                          </span>
+                          <h3 className="font-display text-[22px] font-bold text-ink">{flavor.name}</h3>
+                        </div>
+                        <p className="mt-4 text-[17px] font-semibold text-ink">{flavor.tagline}</p>
+                        <p className="mt-2 text-[15px] leading-relaxed text-ink-mid">{flavor.body}</p>
+                        <ul className="mt-5 space-y-2.5">
+                          {flavor.bullets.map((b) => (
+                            <li key={b} className="flex gap-3">
+                              <span className="mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-brand-tint text-brand">
+                                <Check size={13} strokeWidth={3} />
+                              </span>
+                              <span className="text-[14px] leading-relaxed text-ink-mid">{b}</span>
+                            </li>
+                          ))}
+                        </ul>
+                        <p className="mt-5 text-[13px] text-ink-soft">
+                          <span className="font-semibold text-ink-mid">Replaces:</span> {flavor.replaces}
+                        </p>
+                      </div>
+                      {FVisual && (
+                        <div className={`lg:col-span-6 ${flip ? 'lg:order-1' : ''}`}>
+                          <FVisual />
+                        </div>
+                      )}
+                    </div>
+                  )
+                })}
               </div>
             </div>
           </section>

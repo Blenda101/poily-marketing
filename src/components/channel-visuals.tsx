@@ -1,4 +1,4 @@
-import { Check, Lock, Bell } from 'lucide-react'
+import { Check, Lock, Bell, MessageSquare, MessageCircle } from 'lucide-react'
 import type { ComponentType } from 'react'
 
 /**
@@ -653,16 +653,89 @@ function SmsVisual() {
   )
 }
 
+function MessagingVisual() {
+  const rungs = [
+    { icon: MessageSquare, label: 'In-app', sub: 'in the product', active: false },
+    { icon: Bell, label: 'Push', sub: 'on their device', active: false },
+    { icon: MessageCircle, label: 'SMS', sub: 'any phone', active: true },
+  ]
+  return (
+    <div className="relative">
+      <div aria-hidden className="absolute -inset-4 -z-10 rounded-[32px] bg-brand-tint/60 opacity-70 blur-2xl" />
+      <div className="relative overflow-hidden rounded-tile border border-line-violet bg-white shadow-tile-lg">
+        <div className="flex items-center justify-between border-b border-line-violet bg-mist/60 px-5 py-3.5">
+          <div className="flex items-center gap-2.5">
+            <span className="relative flex h-2 w-2">
+              <span className="live-dot absolute inline-flex h-full w-full rounded-full bg-emerald-500" />
+              <span className="relative inline-flex h-2 w-2 rounded-full bg-emerald-500" />
+            </span>
+            <span className="text-[13px] font-medium text-ink">One journey · progressive reach</span>
+          </div>
+          <span className="rounded-full bg-brand-tint px-2.5 py-1 text-[11px] font-semibold text-brand">
+            trigger: payment failed
+          </span>
+        </div>
+
+        <div className="grid-lines space-y-2.5 p-5">
+          {rungs.map((r, i) => {
+            const RIcon = r.icon
+            return (
+              <div key={r.label}>
+                <div
+                  className={`flex items-center gap-3 rounded-2xl border p-3.5 ${
+                    r.active ? 'border-brand-mid bg-brand-tint/40 shadow-tile-lg' : 'border-line-violet bg-white'
+                  }`}>
+                  <span
+                    className={`flex h-9 w-9 shrink-0 items-center justify-center rounded-xl ${
+                      r.active ? 'bg-brand text-white' : 'bg-brand-tint text-brand'
+                    }`}>
+                    <RIcon size={17} strokeWidth={2.2} />
+                  </span>
+                  <div className="min-w-0 flex-1">
+                    <p className="text-[13px] font-semibold text-ink">{r.label}</p>
+                    <p className="text-[11px] text-ink-soft">{r.sub}</p>
+                  </div>
+                  {r.active && (
+                    <span className="rounded-md bg-brand px-2.5 py-1 text-[10px] font-semibold text-white">
+                      Tap to fix →
+                    </span>
+                  )}
+                </div>
+                {i < rungs.length - 1 && (
+                  <div className="flex justify-center py-0.5 text-brand-accent" aria-hidden="true">
+                    ↓
+                  </div>
+                )}
+              </div>
+            )
+          })}
+          <div className="flex items-center justify-between rounded-xl border border-brand-mid bg-brand-tint/40 px-4 py-2.5">
+            <span className="text-[12px] font-semibold text-ink">Recovered</span>
+            <span className="tabular text-[16px] font-extrabold text-ink">
+              $588<span className="ml-1 text-[11px] font-bold text-emerald-600">MRR</span>
+            </span>
+          </div>
+        </div>
+      </div>
+    </div>
+  )
+}
+
 export const channelVisuals: Record<string, ComponentType> = {
   email: EmailVisual,
   'landing-pages': LandingVisual,
   forms: FormsVisual,
   onboarding: OnboardingVisual,
-  'in-app-messaging': InAppVisual,
-  'push-notifications': PushVisual,
-  sms: SmsVisual,
+  messaging: MessagingVisual,
   social: SocialVisual,
   'content-seo': ContentVisual,
   advertising: AdsVisual,
   affiliate: AffiliateVisual,
+}
+
+/** Per-flavor visuals for the Messaging channel's stacked flavor sections. */
+export const flavorVisuals: Record<string, ComponentType> = {
+  'in-app': InAppVisual,
+  push: PushVisual,
+  sms: SmsVisual,
 }
