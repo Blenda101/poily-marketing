@@ -4,7 +4,7 @@
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <title>The Poily Universe</title>
-<meta name="description" content="An interactive map of the Poily product family — Doerfy, BigTopa, GoalGauntlet, and the standalone apps they power. Explore how everything connects." />
+<meta name="description" content="An interactive map of the Poily product family — Doerfy, BigTopa, GoalGauntlet, Blending101, and the standalone apps they power. Explore how everything connects." />
 <link rel="canonical" href="https://poily.com/universe" />
 <link rel="icon" href="/poily-logo.svg" type="image/svg+xml" />
 <link rel="icon" href="/poily-logo.png" sizes="300x300" />
@@ -230,7 +230,7 @@
   <div class="tour-controls" id="tour-controls" hidden>
     <button id="tour-prev" title="Previous">⏮</button>
     <button id="tour-toggle" title="Pause">⏸</button>
-    <span id="tour-progress">1 / 9</span>
+    <span id="tour-progress">1 / 10</span>
     <button id="tour-next" title="Next">⏭</button>
     <button id="tour-exit" title="Exit tour">✕</button>
   </div>
@@ -343,7 +343,7 @@ const PLANETS = [
     ]
   },
   {
-    id: 'goalgauntlet', label: 'GoalGauntlet', cluster: 'goalgauntlet', kind: 'Fitness app',
+    id: 'goalgauntlet', label: 'GoalGauntlet', cluster: 'health', kind: 'Fitness app',
     color: '#F43F5E', glow: '#E11D48',
     tag: 'Fitness challenges with real stakes.',
     desc: 'Competitive fitness challenges with friends and family where real money is on the line — track with health apps, compete for prize pools.',
@@ -352,14 +352,26 @@ const PLANETS = [
     chips: ['Fitness', 'Real stakes', 'Social'],
     angle: -Math.PI / 2 + (4 * Math.PI / 3), speed: 0.00018,
     children: []
+  },
+  {
+    // Same family as GoalGauntlet: sits beside it on the orbit and shares the Health colour.
+    id: 'blending101', label: 'Blending101', cluster: 'health', kind: 'Nutrition app · beta',
+    color: '#FB7185', glow: '#F43F5E',
+    tag: 'The culinary art and science of blending.',
+    desc: 'Blending101 teaches the culinary art and science of blending plant-based foods: six formulas across twelve ingredient categories. The app is in beta.',
+    url: 'https://blending101.com',
+    meta: [['Status', 'App in beta'], ['Site', 'blending101.com']],
+    chips: ['Nutrition', 'Blending', 'Plant-based'],
+    angle: -Math.PI / 2 + (4 * Math.PI / 3) + 0.5, speed: 0.00018,
+    children: []
   }
 ];
 
 const LEGEND = [
-  { cluster: 'platform', label: 'Poily', color: '#8B5CF6' },
-  { cluster: 'doerfy', label: 'Doerfy', color: '#10B981' },
-  { cluster: 'bigtopa', label: 'BigTopa', color: '#FF7A35' },
-  { cluster: 'goalgauntlet', label: 'GoalGauntlet', color: '#F43F5E' }
+  { cluster: 'platform', label: 'Portfolio', color: '#8B5CF6' },
+  { cluster: 'bigtopa', label: 'Community', color: '#FF7A35' },
+  { cluster: 'doerfy', label: 'Productivity', color: '#10B981' },
+  { cluster: 'health', label: 'Health', color: '#F43F5E' }
 ];
 
 /* ---------- Build flat node list + index ---------- */
@@ -753,7 +765,7 @@ function loop(now) {
 }
 
 /* ---------- Guided "Explore" tour ---------- */
-const TOUR = ['poily', 'doerfy', 'wheel', 'elephant', 'bigtopa', 'greekhouse', 'gatheragain', 'alumnihub', 'goalgauntlet'];
+const TOUR = ['poily', 'doerfy', 'wheel', 'elephant', 'bigtopa', 'greekhouse', 'gatheragain', 'alumnihub', 'goalgauntlet', 'blending101'];
 const TOUR_MS = 4800;
 let tourIndex = -1, tourTimer = null, tourPlaying = false;
 
