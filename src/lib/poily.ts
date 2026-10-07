@@ -28,12 +28,16 @@ export interface BlogPost extends BlogPostListItem {
   canonicalUrl?: string | null
 }
 
-async function gql<T>(query: string, variables: Record<string, unknown>): Promise<T> {
+async function gql<T>(
+  query: string,
+  variables: Record<string, unknown>,
+  revalidate = 60,
+): Promise<T> {
   const res = await fetch(POILY_API, {
     method: 'POST',
     headers: { 'content-type': 'application/json' },
     body: JSON.stringify({ query, variables }),
-    next: { revalidate: 60 },
+    next: { revalidate },
   })
   if (!res.ok) throw new Error(`Poily API ${res.status}`)
   const json = (await res.json()) as { data?: T; errors?: Array<{ message: string }> }
@@ -69,4 +73,55 @@ export async function getBlogPost(slug: string): Promise<BlogPost | null> {
     { t: TENANT, s: slug },
   )
   return data.getPublicPost
+}
+
+/* ── Plan registry (platformPlans) ─────────────────────────────────────────
+ * Contract: Apps/handoffs/admin_mkt/PLAN_TOKENS_CONTRACT.md. The registry owns
+ * the facts (names, prices, features, limits, trial terms); this site only
+ * renders them. Never hardcode or retype any of it.
+ */
+export const PLATFORM_PLANS_QUERY = `query {
+  platformPlans {
+    key name description tierOrder trialDays
+    prices { interval amount currency }
+    features { key name category dataType included limitValue highlight displayOrder }
+  }
+}`
+
+export interface PlatformPlanFeature {
+  key: string
+  name: string
+  category?: string | null
+  /** "boolean" | "metered" — a metered feature with limitValue null is UNLIMITED. */
+  dataType: string
+  included: boolean
+  limitValue?: number | null
+  highlight: boolean
+  displayOrder: number
+}
+
+export interface PlatformPlan {
+  key: string
+  name: string
+  description?: string | null
+  tierOrder: number
+  trialDays: number
+  /** amount is in WHOLE currency units (79 = $79), not cents. */
+  prices: { interval: string; amount: number; currency: string }[]
+  features: PlatformPlanFeature[]
+}
+
+/** Public endpoint, exposed so the client can retry if the server fetch failed. */
+export const POILY_API_URL = POILY_API
+
+/** null = the feed was unreachable (render a fallback, never guessed numbers). */
+export async function getPlatformPlans(): Promise<PlatformPlan[] | null> {
+  try {
+    // 5 min: a Plan Manager edit reaches the page well inside the contract's 1h ceiling.
+    const data = await gql<{ platformPlans: PlatformPlan[] }>(PLATFORM_PLANS_QUERY, {}, 300)
+    return data.platformPlans ?? []
+  } catch (err) {
+    console.error('[poily] getPlatformPlans failed:', err)
+    return null
+  }
 }
