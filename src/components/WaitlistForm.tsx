@@ -35,7 +35,7 @@ declare global {
 // Submits to Poily via the native SDK (forms.poily.com/sdk.js, loaded in the root layout).
 // Attribution (utm/referrer/landing) is captured automatically from the page. Note: only
 // captures on the real poily.com origin — localhost / *.netlify.app 403 (unknown_origin).
-async function poilySubmit(data: Record<string, string>, placement: string) {
+export async function poilySubmit(data: Record<string, string>, placement: string) {
   const Poily = typeof window !== 'undefined' ? window.Poily : undefined
   if (!Poily?.submit) throw new Error('Poily SDK not loaded yet')
   await Poily.submit(POILY_SLUG, data, { placement })
@@ -298,7 +298,7 @@ export default function WaitlistForm() {
   )
 }
 
-function DarkSelect({
+export function DarkSelect({
   id,
   name,
   value,
@@ -351,7 +351,7 @@ function DarkSelect({
   )
 }
 
-function Spinner() {
+export function Spinner() {
   return (
     <svg className="h-4 w-4 animate-spin text-ink/70" viewBox="0 0 24 24" fill="none" aria-hidden="true">
       <circle cx="12" cy="12" r="9" stroke="currentColor" strokeOpacity="0.25" strokeWidth="3" />

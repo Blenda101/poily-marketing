@@ -3,6 +3,7 @@ import { ArrowRight } from 'lucide-react'
 import SiteNav from '@/components/SiteNav'
 import SiteFooter from '@/components/SiteFooter'
 import PlanTable from '@/components/PlanTable'
+import ContactSalesForm from '@/components/ContactSalesForm'
 import { getPlatformPlans, POILY_API_URL } from '@/lib/poily'
 
 /**
@@ -52,7 +53,7 @@ const FAQ: { q: string; a: string; link?: { href: string; label: string } }[] = 
   {
     q: 'What if I need more than the top plan?',
     a: 'Talk to us. Larger portfolios get a sales-assisted setup sized to how many products, contacts and seats you run.',
-    link: { href: '/#waitlist', label: 'Get in touch' },
+    link: { href: '#contact-sales', label: 'Contact sales' },
   },
   {
     q: 'Where do I sign up?',
@@ -122,6 +123,22 @@ export default async function PricingPage() {
             Prices in this table come live from Poily’s own plan registry — the same plans that power
             checkout. What you see here is what you’ll be charged.
           </p>
+
+          {/* sales-assist path — no plan names or numbers here, they're the registry's */}
+          <div className="mx-auto mt-10 flex max-w-4xl flex-col items-start justify-between gap-5 rounded-tile border border-line-violet bg-brand-tint/60 px-7 py-6 sm:flex-row sm:items-center">
+            <div>
+              <h3 className="font-display text-lg font-bold text-ink">Running a bigger portfolio?</h3>
+              <p className="mt-1 text-[15px] text-ink-mid">
+                More products, higher volumes or a migration plan — we’ll size it with you.
+              </p>
+            </div>
+            <a
+              href="#contact-sales"
+              className="inline-flex flex-none items-center gap-2 rounded-full border border-brand/30 bg-cream px-5 py-2.5 text-sm font-semibold text-brand transition-colors hover:border-brand hover:bg-white">
+              Contact sales
+              <ArrowRight className="h-4 w-4" />
+            </a>
+          </div>
         </section>
 
         {/* ───────────── Why one platform ───────────── */}
@@ -189,21 +206,30 @@ export default async function PricingPage() {
           </div>
         </section>
 
-        {/* ───────────── Closing CTA ───────────── */}
-        <section className="bg-dark">
-          <div className="max-w-shell mx-auto px-5 sm:px-8 py-20 text-center lg:py-24">
-            <h2 className="mx-auto max-w-2xl font-display text-[clamp(30px,4vw,52px)] font-extrabold leading-[1.08] tracking-[-0.02em] text-white">
-              Start where you are. Move up when it pays.
-            </h2>
-            <p className="mx-auto mt-5 max-w-xl text-[17px] leading-relaxed text-white/60">
-              Pick a plan, start your trial, and run your go-to-market from one place.
-            </p>
-            <a
-              href="#plans"
-              className="group mt-9 inline-flex items-center gap-2 rounded-full bg-brand px-7 py-3.5 text-[15px] font-semibold text-white shadow-cta transition-colors hover:bg-brand-deep">
-              Compare plans
-              <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-0.5" />
-            </a>
+        {/* ───────────── Contact sales ───────────── */}
+        <section id="contact-sales" className="bg-dark">
+          <div className="max-w-shell mx-auto grid gap-12 px-5 py-20 sm:px-8 lg:grid-cols-12 lg:gap-16 lg:py-24">
+            <div className="lg:col-span-5">
+              <span className="text-xs font-semibold tracking-[0.14em] uppercase text-white/50">
+                Contact sales
+              </span>
+              <h2 className="mt-3 font-display text-[clamp(30px,4vw,48px)] font-extrabold leading-[1.08] tracking-[-0.02em] text-white">
+                Start where you are. Scale when it pays.
+              </h2>
+              <p className="mt-5 text-[17px] leading-relaxed text-white/60">
+                Outgrowing the standard plans, or replacing a stack across several products? Tell us what
+                you run and we’ll put together a setup that fits.
+              </p>
+              <a
+                href="#plans"
+                className="group mt-8 inline-flex items-center gap-2 text-[15px] font-semibold text-white/80 transition-colors hover:text-white">
+                Or compare plans
+                <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-0.5" />
+              </a>
+            </div>
+            <div className="lg:col-span-7">
+              <ContactSalesForm />
+            </div>
           </div>
         </section>
       </main>
