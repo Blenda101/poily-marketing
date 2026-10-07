@@ -26,6 +26,10 @@ export const metadata: Metadata = {
   twitter: { card: 'summary_large_image', title, description },
 }
 
+// Pre-launch switch: until POILY_SIGNUP_OPEN=true, plan CTAs join the waitlist (with the
+// chosen plan recorded) instead of opening app.poily.com/signup.
+const SIGNUP_OPEN = process.env.POILY_SIGNUP_OPEN === 'true'
+
 // ISR: a Plan Manager edit reaches the page within 5 min (contract ceiling: 1h).
 export const revalidate = 300
 
@@ -55,10 +59,15 @@ const FAQ: { q: string; a: string; link?: { href: string; label: string } }[] = 
     a: 'Talk to us. Larger portfolios get a sales-assisted setup sized to how many products, contacts and seats you run.',
     link: { href: '#contact-sales', label: 'Contact sales' },
   },
-  {
-    q: 'Where do I sign up?',
-    a: 'Every plan button takes you to app.poily.com with that plan preselected. You create your account and portfolio, then check out securely through Stripe.',
-  },
+  SIGNUP_OPEN
+    ? {
+        q: 'Where do I sign up?',
+        a: 'Every plan button takes you to app.poily.com with that plan preselected. You create your account and portfolio, then check out securely through Stripe.',
+      }
+    : {
+        q: 'Can I sign up today?',
+        a: 'Poily is in early access. Pick a plan to join the waitlist — we note the plan you chose and invite you onto it as access opens.',
+      },
 ]
 
 const faqJsonLd = {
@@ -118,7 +127,7 @@ export default async function PricingPage() {
 
         {/* ───────────── Plans (registry-fed) ───────────── */}
         <section id="plans" className="relative max-w-shell mx-auto px-5 sm:px-8 pb-20 lg:pb-28">
-          <PlanTable initialPlans={plans} apiUrl={POILY_API_URL} />
+          <PlanTable initialPlans={plans} apiUrl={POILY_API_URL} signupOpen={SIGNUP_OPEN} />
           <p className="mx-auto mt-8 max-w-2xl text-center text-[13px] leading-relaxed text-ink-faint">
             Prices in this table come live from Poily’s own plan registry — the same plans that power
             checkout. What you see here is what you’ll be charged.

@@ -1,6 +1,6 @@
 'use client'
 
-import { useId, useState } from 'react'
+import { useEffect, useId, useState } from 'react'
 
 type Status = 'idle' | 'submitting' | 'success' | 'error'
 type ProfileStatus = 'idle' | 'submitting' | 'done'
@@ -49,6 +49,13 @@ export default function WaitlistForm() {
   const [role, setRole] = useState('')
   const [status, setStatus] = useState<Status>('idle')
   const [error, setError] = useState<string | null>(null)
+  // Plan picked on /pricing pre-launch (?plan=&interval=) — recorded as interest, never shown.
+  const [planInterest, setPlanInterest] = useState({ plan: '', interval: '' })
+
+  useEffect(() => {
+    const q = new URLSearchParams(window.location.search)
+    setPlanInterest({ plan: q.get('plan') ?? '', interval: q.get('interval') ?? '' })
+  }, [])
 
   // optional progressive-profiling step (shown after success)
   const [teamSize, setTeamSize] = useState('')
@@ -73,8 +80,17 @@ export default function WaitlistForm() {
     setStatus('submitting')
     try {
       await poilySubmit(
-        { first_name: nameVal, email: emailVal, saas_url: saasUrl.trim(), role },
-        'waitlist'
+        {
+          first_name: nameVal,
+          email: emailVal,
+          saas_url: saasUrl.trim(),
+          role,
+          ...(planInterest.plan && {
+            plan_interest: planInterest.plan,
+            plan_interval: planInterest.interval,
+          }),
+        },
+        planInterest.plan ? 'waitlist_pricing' : 'waitlist'
       )
       setStatus('success')
     } catch {
