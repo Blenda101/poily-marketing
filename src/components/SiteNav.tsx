@@ -8,6 +8,7 @@ const links = [
   { label: 'Channels', href: '/#channels' },
   { label: 'Platform', href: '/#platform' },
   { label: 'How it works', href: '/#how-it-works' },
+  { label: 'Pricing', href: '/pricing' },
 ]
 
 export default function SiteNav() {

@@ -81,9 +81,12 @@ function yearlySavingPct(plans: PlatformPlan[]) {
 export default function PlanTable({
   initialPlans,
   apiUrl,
+  signupOpen,
 }: {
   initialPlans: PlatformPlan[] | null
   apiUrl: string
+  /** false = pre-launch: CTAs join the waitlist (recording the chosen plan) instead of signup. */
+  signupOpen: boolean
 }) {
   const [plans, setPlans] = useState(initialPlans)
   const [failed, setFailed] = useState(false)
@@ -180,7 +183,7 @@ export default function PlanTable({
               : 'max-w-md'
         }`}>
         {active.plans.map((p) => (
-          <PlanCard key={p.key} plan={p} interval={interval} />
+          <PlanCard key={p.key} plan={p} interval={interval} signupOpen={signupOpen} />
         ))}
       </div>
     </div>
@@ -209,10 +212,20 @@ function IntervalButton({
   )
 }
 
-function PlanCard({ plan, interval }: { plan: PlatformPlan; interval: Interval }) {
+function PlanCard({
+  plan,
+  interval,
+  signupOpen,
+}: {
+  plan: PlatformPlan
+  interval: Interval
+  signupOpen: boolean
+}) {
   const price = priceFor(plan, interval)
-  const href = `${SIGNUP_URL}?plan=${encodeURIComponent(plan.key)}&interval=${interval}` // §2.7
-  const cta = plan.trialDays > 0 ? 'Start free trial' : 'Get started'
+  const query = `plan=${encodeURIComponent(plan.key)}&interval=${interval}`
+  // §2.7 when open; pre-launch the waitlist form records the same plan + interval as interest.
+  const href = signupOpen ? `${SIGNUP_URL}?${query}` : `/?${query}#waitlist`
+  const cta = !signupOpen ? 'Join the waitlist' : plan.trialDays > 0 ? 'Start free trial' : 'Get started'
 
   return (
     <article className="flex flex-col rounded-tile border border-line bg-cream p-7 shadow-tile">
