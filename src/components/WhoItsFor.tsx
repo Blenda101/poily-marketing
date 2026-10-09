@@ -10,14 +10,19 @@ import {
   Boxes,
   FileText,
   Gauge,
+  CreditCard,
+  Activity,
+  Mail,
+  Link2,
+  TerminalSquare,
 } from 'lucide-react'
 import type { LucideIcon } from 'lucide-react'
 import PoiPin from '@/components/PoiPin'
 
 /**
  * Homepage "Who it's for": AI-assisted builders (vibe coders, seasoned developers, mixed
- * teams), single product or portfolio — and how they plug in (point-and-click connectors
- * or agent/developer APIs) across the four power features. AI here is the CUSTOMER's
+ * teams), single product or portfolio — and how they plug in (point-and-click connectors,
+ * agent-tuned prompts, or APIs & MCP) across every GTM connection point. AI here is the CUSTOMER's
  * build context, not Poily's headline (see positioning: AI is icing, not cake).
  */
 
@@ -27,8 +32,8 @@ const AUDIENCES: { icon: LucideIcon; title: string; body: string; via: string }[
   {
     icon: Wand2,
     title: 'Non-technical vibe coders',
-    body: 'You built it in Lovable, Bolt or Replit. Now launch, price and market it the same way — point and click, no billing engineer, no growth hire.',
-    via: 'Point-and-click',
+    body: 'You built it in Lovable, Bolt or Replit. Now launch, price and market it the same way — point and click, or paste a prompt into your agent. No billing engineer, no growth hire.',
+    via: 'Click & prompt',
   },
   {
     icon: Code2,
@@ -51,12 +56,18 @@ const MODES: { icon: LucideIcon; title: string; body: string }[] = [
     body: 'Connect your product, Stripe and email provider from the dashboard, then set up plans, brand and pages visually.',
   },
   {
+    icon: TerminalSquare,
+    title: 'Prompts tuned for your agent',
+    body: 'Copy a ready-made prompt for each feature — tuned for Lovable, Bolt, Cursor, Claude Code or Codex — and your agent wires it in.',
+  },
+  {
     icon: Bot,
-    title: 'Agent & developer APIs',
-    body: 'The same power over API and MCP — so you, or your coding agent, can create plans, publish pages and read usage in a prompt.',
+    title: 'APIs & MCP',
+    body: 'A hosted MCP server and REST API, with docs written for models — so agents and developers get the same power the dashboard has.',
   },
 ]
 
+/** Every GTM connection point a builder usually hand-rolls — each works by click, prompt or API. */
 const POWER: { icon: LucideIcon; title: string; body: string }[] = [
   {
     icon: Palette,
@@ -66,17 +77,37 @@ const POWER: { icon: LucideIcon; title: string; body: string }[] = [
   {
     icon: Boxes,
     title: 'Plans & entitlements',
-    body: 'Tiers, prices and limits defined once; your app reads what each customer gets.',
+    body: 'Tiers, prices and limits defined once; your app checks what each customer can use.',
+  },
+  {
+    icon: CreditCard,
+    title: 'Checkout & subscriptions',
+    body: 'Stripe checkout, trials, upgrades and webhooks handled — not hand-rolled.',
+  },
+  {
+    icon: Gauge,
+    title: 'Usage-metered paywalls',
+    body: 'Meter usage, show “3 of 5 used”, and turn the limit into an upgrade or overage.',
+  },
+  {
+    icon: Activity,
+    title: 'Users & product events',
+    body: 'Identify users and send events once; lifecycle, attribution and metering all read them.',
   },
   {
     icon: FileText,
     title: 'Publishing',
-    body: 'Content, pages and forms on your own domain — from the editor or an API call.',
+    body: 'Content, pages and forms on your own domain — from the editor, a prompt or an API call.',
   },
   {
-    icon: Gauge,
-    title: 'Usage metering',
-    body: 'Report usage, enforce quotas and charge overage — no metering service to build.',
+    icon: Mail,
+    title: 'Email & messaging',
+    body: 'Sending domain, deliverability, in-app and push — set up once, used by every campaign.',
+  },
+  {
+    icon: Link2,
+    title: 'Attribution tracking',
+    body: 'UTMs, referrers and first touch captured on every visit and signup — no hidden fields.',
   },
 ]
 
@@ -168,11 +199,11 @@ export default function WhoItsFor() {
               Point and click, or prompt and call.
             </h3>
             <p className="mt-4 text-[16px] leading-relaxed text-ink-mid">
-              Every power feature works both ways — so the person (or agent) closest to the job can do it.
+              Every connection point works three ways — so the person, or the agent, closest to the job can do it.
             </p>
           </div>
 
-          <div className="mt-8 grid gap-4 md:grid-cols-2">
+          <div className="mt-8 grid gap-4 md:grid-cols-3">
             {MODES.map((m) => (
               <div key={m.title} className="reveal flex gap-4 rounded-tile border border-line-violet bg-white p-6 shadow-tile">
                 <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-brand text-white">
@@ -190,7 +221,7 @@ export default function WhoItsFor() {
             {POWER.map((p, i) => (
               <div
                 key={p.title}
-                className={`reveal reveal-d${i + 1} rounded-tile border border-line bg-white/70 p-5`}>
+                className={`reveal reveal-d${(i % 4) + 1} rounded-tile border border-line bg-white/70 p-5`}>
                 <div className="flex items-center gap-2.5">
                   <p.icon size={18} strokeWidth={2} className="text-brand" />
                   <h4 className="font-display text-[16px] font-bold text-ink">{p.title}</h4>
@@ -198,7 +229,8 @@ export default function WhoItsFor() {
                 <p className="mt-2 text-[13.5px] leading-relaxed text-ink-mid">{p.body}</p>
                 <div className="mt-3 flex gap-1.5 text-[10px] font-semibold uppercase tracking-wide">
                   <span className="rounded-full bg-brand-tint px-2 py-0.5 text-brand">Click</span>
-                  <span className="rounded-full bg-ink/[0.05] px-2 py-0.5 text-ink-soft">API</span>
+                  <span className="rounded-full bg-brand-tint px-2 py-0.5 text-brand">Prompt</span>
+                  <span className="rounded-full bg-ink/[0.05] px-2 py-0.5 text-ink-soft">API · MCP</span>
                 </div>
               </div>
             ))}
