@@ -143,16 +143,24 @@ export default function HomePage() {
         {/* ─────────────────── Platform / wedge ─────────────────── */}
         <section id="platform" className="bg-mist">
           <div className="max-w-shell mx-auto px-5 sm:px-8 py-20 lg:py-28">
-            <div className="max-w-2xl reveal">
-              <span className="text-xs font-semibold tracking-[0.14em] uppercase text-brand">
-                Built for SaaS
-              </span>
-              <h2 className="mt-3 font-display text-[clamp(28px,3.6vw,46px)] font-bold tracking-[-0.015em] text-ink leading-[1.1]">
-                Not bolted on. Built in.
-              </h2>
-              <p className="mt-4 text-[17px] leading-relaxed text-ink-mid">
-                Generic marketing tools stop at the lead. Poily owns your plans, so it follows the money.
-              </p>
+            <div className="reveal flex flex-col gap-6 lg:flex-row lg:items-end lg:justify-between">
+              <div className="max-w-2xl">
+                <span className="text-xs font-semibold tracking-[0.14em] uppercase text-brand">
+                  Monetization
+                </span>
+                <h2 className="mt-3 font-display text-[clamp(28px,3.6vw,46px)] font-bold tracking-[-0.015em] text-ink leading-[1.1]">
+                  Not bolted on. Built in.
+                </h2>
+                <p className="mt-4 text-[17px] leading-relaxed text-ink-mid">
+                  Generic marketing tools stop at the lead. Poily owns your plans, so it follows the money.
+                </p>
+              </div>
+              <a
+                href="/platform"
+                className="inline-flex shrink-0 items-center gap-2 rounded-full border border-brand-mid bg-white px-5 py-3 text-sm font-semibold text-brand transition-colors hover:bg-brand-tint">
+                Explore the platform
+                <ArrowRight size={16} strokeWidth={2.2} />
+              </a>
             </div>
 
             <div className="mt-12 grid lg:grid-cols-6 gap-4">
@@ -161,6 +169,7 @@ export default function HomePage() {
                 className="lg:col-span-3 reveal"
                 icon={Boxes}
                 eyebrow="The wedge"
+                href="/platform/plans-entitlements"
                 title="Plan &amp; Entitlement Builder"
                 body="Define plans and gates once — Poily becomes the source of truth. The same plan renders your pricing page, in-app billing portal, and onboarding, so the price you publish and the price you charge can never drift.">
                 <PlanMotif />
@@ -171,6 +180,7 @@ export default function HomePage() {
                 className="lg:col-span-3 reveal reveal-d1"
                 icon={Repeat}
                 eyebrow="Closed loop"
+                href="/platform/attribution"
                 title="Marketing-to-revenue attribution"
                 body="Connect every touch — ad click, email, content — to the subscription it created. Know what drives MRR, not just clicks.">
                 <AttributionMotif />
@@ -244,6 +254,7 @@ function FeatureTile({
   eyebrow,
   title,
   body,
+  href,
   children,
 }: {
   className?: string
@@ -251,6 +262,7 @@ function FeatureTile({
   eyebrow: string
   title: string
   body: string
+  href: string
   children: React.ReactNode
 }) {
   return (
@@ -270,6 +282,10 @@ function FeatureTile({
       />
       <p className="mt-3 text-[15px] leading-relaxed text-ink-mid max-w-prose">{body}</p>
       <div className="mt-6">{children}</div>
+      <a href={href} className="group mt-6 inline-flex items-center gap-1 text-[13px] font-semibold text-brand">
+        Learn more
+        <span className="transition-transform group-hover:translate-x-0.5">→</span>
+      </a>
     </div>
   )
 }

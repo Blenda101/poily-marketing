@@ -34,6 +34,7 @@ import {
   MessageCircle,
 } from 'lucide-react'
 import type { LucideIcon } from 'lucide-react'
+import { capabilityHrefBySlug } from '@/lib/platform'
 
 export type Family = 'acquisition' | 'activation'
 
@@ -922,11 +923,12 @@ export const FOOTER_GROUPS: { title: string; links: FooterLink[] }[] = [
   {
     title: 'Monetization',
     links: [
-      { label: 'Plan & entitlement builder', href: '/#platform' },
-      { label: 'Branded Billing Portal', href: '/#platform' },
-      { label: 'Paywalls & entitlements', href: '/#platform' },
-      { label: 'Pricing experiments', href: '/#platform' },
-      { label: 'Custom plans & sales-assist', href: '/#platform' },
+      { label: 'Plan & entitlement builder', href: capabilityHrefBySlug('plans-entitlements') },
+      { label: 'Checkout & trials', href: capabilityHrefBySlug('checkout-trials') },
+      { label: 'Branded Billing Portal', href: capabilityHrefBySlug('billing-portal') },
+      { label: 'Paywalls & entitlements', href: capabilityHrefBySlug('paywalls') },
+      { label: 'Pricing experiments', href: capabilityHrefBySlug('pricing-experiments') },
+      { label: 'Custom plans & sales-assist', href: capabilityHrefBySlug('custom-plans') },
     ],
   },
   {
@@ -939,11 +941,11 @@ export const FOOTER_GROUPS: { title: string; links: FooterLink[] }[] = [
   {
     title: 'Platform',
     links: [
-      { label: 'Automation & lifecycle', href: '/#platform' },
-      { label: 'CRM & segmentation', href: '/#platform' },
-      { label: 'Attribution', href: '/#platform' },
-      { label: 'Analytics & reporting', href: '/#platform' },
-      { label: 'Integrations & API', href: '/#platform' },
+      { label: 'Attribution', href: capabilityHrefBySlug('attribution') },
+      { label: 'Automation & lifecycle', href: capabilityHrefBySlug('automation') },
+      { label: 'CRM & segmentation', href: capabilityHrefBySlug('crm-segmentation') },
+      { label: 'Analytics & reporting', href: capabilityHrefBySlug('analytics') },
+      { label: 'Integrations & API', href: capabilityHrefBySlug('integrations-api') },
     ],
   },
 ]
