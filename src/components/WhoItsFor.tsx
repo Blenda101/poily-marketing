@@ -134,13 +134,13 @@ export default function WhoItsFor() {
               <PoiPin className="h-3 text-brand" /> Marketing
             </span>
             <span className="text-ink-faint">+</span>
-            <span className="inline-flex items-center gap-1.5 rounded-full bg-amber-50 px-3 py-1 text-[12px] font-semibold uppercase tracking-wide text-amber-800">
+            <span className="inline-flex items-center gap-1.5 rounded-full bg-amber-100 px-3 py-1 text-[12px] font-semibold uppercase tracking-wide text-amber-800">
               <PoiPin className="h-3 text-amber-500" /> Monetization
             </span>
           </div>
           <div className="mt-6 flex flex-wrap items-center gap-2">
             <span className="mr-1 text-[12px] font-semibold uppercase tracking-[0.12em] text-ink-faint">
-              Built with
+              Built for
             </span>
             {BUILT_WITH.map((t) => (
               <span
