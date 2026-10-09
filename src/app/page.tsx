@@ -21,7 +21,7 @@ import Intelligence from '@/components/Intelligence'
 import WaitlistForm from '@/components/WaitlistForm'
 import ScrollReveal from '@/components/ScrollReveal'
 import SiteFooter from '@/components/SiteFooter'
-import ChannelCard, { ChannelLegend, FamilyTag } from '@/components/ChannelCard'
+import ChannelCard, { ChannelLegend, FamilyTag, PlatformLegend } from '@/components/ChannelCard'
 import { CHANNELS } from '@/lib/channels'
 
 export default function HomePage() {
@@ -145,15 +145,15 @@ export default function HomePage() {
           <div className="max-w-shell mx-auto px-5 sm:px-8 py-20 lg:py-28">
             <div className="reveal flex flex-col gap-6 lg:flex-row lg:items-end lg:justify-between">
               <div className="max-w-2xl">
-                <span className="text-xs font-semibold tracking-[0.14em] uppercase text-brand">
-                  Monetization
-                </span>
-                <h2 className="mt-3 font-display text-[clamp(28px,3.6vw,46px)] font-bold tracking-[-0.015em] text-ink leading-[1.1]">
-                  Not bolted on. Built in.
+                <h2 className="font-display text-[clamp(28px,3.6vw,46px)] font-bold tracking-[-0.015em] text-ink leading-[1.1]">
+                  <span className="text-brand">Monetization:</span> not bolted on, built in.
                 </h2>
                 <p className="mt-4 text-[17px] leading-relaxed text-ink-mid">
-                  Generic marketing tools stop at the lead. Poily owns your plans, so it follows the money.
+                  Generic marketing tools stop at the lead. Poily builds your plans.
                 </p>
+                <div className="mt-6">
+                  <PlatformLegend />
+                </div>
               </div>
               <a
                 href="/platform"
@@ -268,13 +268,16 @@ function FeatureTile({
   return (
     <div
       className={`relative rounded-tile bg-white border border-line-violet p-7 shadow-tile overflow-hidden ${className}`}>
-      <div className="flex items-center gap-3">
-        <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-brand text-white">
-          <Icon size={20} strokeWidth={2} />
+      <div className="flex items-center justify-between gap-3">
+        <div className="flex items-center gap-3">
+          <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-brand text-white">
+            <Icon size={20} strokeWidth={2} />
+          </div>
+          <span className="text-[11px] font-semibold tracking-[0.14em] uppercase text-brand">
+            {eyebrow}
+          </span>
         </div>
-        <span className="text-[11px] font-semibold tracking-[0.14em] uppercase text-brand">
-          {eyebrow}
-        </span>
+        <FamilyTag family="monetization" />
       </div>
       <h3
         className="mt-5 font-display text-[clamp(20px,2vw,26px)] font-bold tracking-[-0.01em] text-ink"

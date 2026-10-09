@@ -40,13 +40,13 @@ export const CAPABILITY_GROUPS: Record<CapabilityGroup, { label: string; title: 
     label: 'Monetization',
     title: 'Own your plans. Monetize on purpose.',
     blurb:
-      'Plans, prices, limits and upgrades defined once — and read by your pricing page, checkout, product and marketing.',
+      'Plans, prices, limits and upgrades defined once — and every campaign followed to the revenue it earns.',
   },
   platform: {
     label: 'Platform',
     title: 'One record underneath everything.',
     blurb:
-      'The customer record, automation and reporting every channel shares — so the funnel ends at revenue, not at the lead.',
+      'The customer record, automation and reporting every channel shares — one source of truth across every product.',
   },
 }
 
@@ -181,76 +181,9 @@ export const CAPABILITIES: Capability[] = [
     },
   },
   {
-    slug: 'checkout-trials',
-    name: 'Checkout & trials on Stripe',
-    group: 'monetization',
-    icon: CreditCard,
-    card: 'Checkout straight from your plan catalog — prices, intervals and trials exactly as you defined them.',
-    points: [
-      'Stripe Checkout generated from your plans',
-      'Card-required free trials, length set per plan',
-      'Subscriptions kept in sync with every Stripe event',
-    ],
-    related: ['plans-entitlements', 'billing-portal'],
-  },
-  {
-    slug: 'billing-portal',
-    name: 'Branded billing portal',
-    group: 'monetization',
-    icon: Receipt,
-    card: 'A self-serve billing portal on your brand — plans, upgrades, payment methods and invoices.',
-    points: [
-      'Customers upgrade, downgrade and update cards themselves',
-      'Shows the same plans your pricing page does',
-      'Styled by your brand kit, not a generic checkout skin',
-    ],
-    related: ['checkout-trials', 'paywalls'],
-  },
-  {
-    slug: 'paywalls',
-    name: 'Paywalls & upgrade prompts',
-    group: 'monetization',
-    icon: Lock,
-    card: 'Turn a limit into an upgrade — prompts that know the plan, the usage and the next tier.',
-    points: [
-      'Prompts triggered by real limits, not guesswork',
-      'Show the next tier with its live price',
-      'Every upgrade attributed to the prompt that drove it',
-    ],
-    related: ['plans-entitlements', 'pricing-experiments'],
-  },
-  {
-    slug: 'pricing-experiments',
-    name: 'Pricing experiments',
-    group: 'monetization',
-    icon: FlaskConical,
-    card: 'Test prices, packaging and trial lengths — measured in revenue, not clicks.',
-    points: [
-      'A/B test pricing pages and plan packaging',
-      'Compare trial-to-paid and MRR by variant',
-      'Promote the winner to your live plans in one step',
-    ],
-    related: ['plans-entitlements', 'analytics'],
-  },
-  {
-    slug: 'custom-plans',
-    name: 'Custom plans & sales-assist',
-    group: 'monetization',
-    icon: Handshake,
-    card: 'When a customer outgrows self-serve, hand them to sales — with the context to close.',
-    points: [
-      'Limits can route customers to sales instead of a wall',
-      'Pipeline and opportunities on the same customer record',
-      'Custom plans built from the same feature registry',
-    ],
-    related: ['plans-entitlements', 'crm-segmentation'],
-  },
-
-  /* ───────────────────────────── Platform ───────────────────────────── */
-  {
     slug: 'attribution',
     name: 'Marketing-to-revenue attribution',
-    group: 'platform',
+    group: 'monetization',
     icon: Repeat,
     card: 'Follow every touch from first visit to trial to subscription — and know what actually drives MRR.',
     points: [
@@ -345,6 +278,73 @@ export const CAPABILITIES: Capability[] = [
       ],
     },
   },
+  {
+    slug: 'checkout-trials',
+    name: 'Checkout & trials on Stripe',
+    group: 'monetization',
+    icon: CreditCard,
+    card: 'Checkout straight from your plan catalog — prices, intervals and trials exactly as you defined them.',
+    points: [
+      'Stripe Checkout generated from your plans',
+      'Card-required free trials, length set per plan',
+      'Subscriptions kept in sync with every Stripe event',
+    ],
+    related: ['plans-entitlements', 'billing-portal'],
+  },
+  {
+    slug: 'billing-portal',
+    name: 'Branded billing portal',
+    group: 'monetization',
+    icon: Receipt,
+    card: 'A self-serve billing portal on your brand — plans, upgrades, payment methods and invoices.',
+    points: [
+      'Customers upgrade, downgrade and update cards themselves',
+      'Shows the same plans your pricing page does',
+      'Styled by your brand kit, not a generic checkout skin',
+    ],
+    related: ['checkout-trials', 'paywalls'],
+  },
+  {
+    slug: 'paywalls',
+    name: 'Paywalls & upgrade prompts',
+    group: 'monetization',
+    icon: Lock,
+    card: 'Turn a limit into an upgrade — prompts that know the plan, the usage and the next tier.',
+    points: [
+      'Prompts triggered by real limits, not guesswork',
+      'Show the next tier with its live price',
+      'Every upgrade attributed to the prompt that drove it',
+    ],
+    related: ['plans-entitlements', 'pricing-experiments'],
+  },
+  {
+    slug: 'pricing-experiments',
+    name: 'Pricing experiments',
+    group: 'monetization',
+    icon: FlaskConical,
+    card: 'Test prices, packaging and trial lengths — measured in revenue, not clicks.',
+    points: [
+      'A/B test pricing pages and plan packaging',
+      'Compare trial-to-paid and MRR by variant',
+      'Promote the winner to your live plans in one step',
+    ],
+    related: ['plans-entitlements', 'analytics'],
+  },
+  {
+    slug: 'custom-plans',
+    name: 'Custom plans & sales-assist',
+    group: 'monetization',
+    icon: Handshake,
+    card: 'When a customer outgrows self-serve, hand them to sales — with the context to close.',
+    points: [
+      'Limits can route customers to sales instead of a wall',
+      'Pipeline and opportunities on the same customer record',
+      'Custom plans built from the same feature registry',
+    ],
+    related: ['plans-entitlements', 'crm-segmentation'],
+  },
+
+  /* ───────────────────────────── Platform ───────────────────────────── */
   {
     slug: 'automation',
     name: 'Automation & lifecycle',

@@ -35,6 +35,20 @@ export function ChannelLegend() {
   )
 }
 
+/** Legend for the homepage Monetization section: what the two pin colors mean there. */
+export function PlatformLegend() {
+  return (
+    <div className="flex flex-wrap items-center gap-x-5 gap-y-2 text-[13px] text-ink-soft">
+      <span className="inline-flex items-center gap-1.5">
+        <PoiPin className="h-3 text-amber-500" /> Monetization — plans, pricing and the revenue they earn
+      </span>
+      <span className="inline-flex items-center gap-1.5">
+        <PoiPin className="h-3 text-ink-faint" /> Platform — the record underneath every channel
+      </span>
+    </div>
+  )
+}
+
 export default function ChannelCard({ channel }: { channel: Channel }) {
   const Icon = channel.icon
   return (

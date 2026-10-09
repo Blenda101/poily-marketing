@@ -924,6 +924,7 @@ export const FOOTER_GROUPS: { title: string; links: FooterLink[] }[] = [
     title: 'Monetization',
     links: [
       { label: 'Plan & entitlement builder', href: capabilityHrefBySlug('plans-entitlements') },
+      { label: 'Marketing-to-revenue attribution', href: capabilityHrefBySlug('attribution') },
       { label: 'Checkout & trials', href: capabilityHrefBySlug('checkout-trials') },
       { label: 'Branded Billing Portal', href: capabilityHrefBySlug('billing-portal') },
       { label: 'Paywalls & entitlements', href: capabilityHrefBySlug('paywalls') },
@@ -941,7 +942,6 @@ export const FOOTER_GROUPS: { title: string; links: FooterLink[] }[] = [
   {
     title: 'Platform',
     links: [
-      { label: 'Attribution', href: capabilityHrefBySlug('attribution') },
       { label: 'Automation & lifecycle', href: capabilityHrefBySlug('automation') },
       { label: 'CRM & segmentation', href: capabilityHrefBySlug('crm-segmentation') },
       { label: 'Analytics & reporting', href: capabilityHrefBySlug('analytics') },
