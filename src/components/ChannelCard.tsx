@@ -7,7 +7,7 @@ export type Tag = Family | 'monetization' | 'platform' | 'closed-loop'
 const tagStyles: Record<Tag, { wrap: string; pin: string; label: string }> = {
   acquisition: { wrap: 'text-brand bg-brand-tint', pin: 'text-brand', label: 'Acquisition' },
   activation: { wrap: 'text-emerald-700 bg-emerald-50', pin: 'text-emerald-500', label: 'Activation' },
-  monetization: { wrap: 'text-amber-800 bg-amber-50', pin: 'text-amber-500', label: 'Monetization' },
+  monetization: { wrap: 'text-amber-800 bg-amber-100', pin: 'text-amber-500', label: 'Monetization' },
   platform: { wrap: 'text-ink-soft bg-ink/[0.05]', pin: 'text-ink-faint', label: 'Platform' },
   // the bridge: attribution belongs to marketing AND monetization — rendered with both pins
   'closed-loop': { wrap: 'text-ink-mid bg-brand-tint', pin: 'text-brand', label: 'Marketing + Monetization' },
