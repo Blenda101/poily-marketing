@@ -72,7 +72,7 @@ const POWER: { icon: LucideIcon; title: string; body: string }[] = [
   {
     icon: Palette,
     title: 'Branding',
-    body: 'A brand kit for each product — colors, logo, voice — applied to every page, email and form it publishes.',
+    body: 'A brand kit for each product or line — colors, logo, voice — applied to every page, email and form it publishes.',
   },
   {
     icon: Boxes,
