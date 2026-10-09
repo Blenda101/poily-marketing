@@ -21,7 +21,7 @@ import PoiPin from '@/components/PoiPin'
  * build context, not Poily's headline (see positioning: AI is icing, not cake).
  */
 
-const BUILT_WITH = ['Lovable', 'Bolt', 'Replit', 'v0', 'Cursor', 'Claude Code']
+const BUILT_WITH = ['Lovable', 'Bolt', 'Replit', 'v0', 'Cursor', 'Claude Code', 'Codex']
 
 const AUDIENCES: { icon: LucideIcon; title: string; body: string; via: string }[] = [
   {
@@ -33,7 +33,7 @@ const AUDIENCES: { icon: LucideIcon; title: string; body: string; via: string }[
   {
     icon: Code2,
     title: 'Seasoned developers',
-    body: 'You ship with Cursor or Claude Code. Stop hand-rolling pricing, checkout and attribution — wire Poily in through APIs your agents can call too.',
+    body: 'You ship with Cursor, Claude Code or Codex. Stop hand-rolling pricing, checkout and attribution — wire Poily in through APIs your agents can call too.',
     via: 'APIs & agents',
   },
   {
