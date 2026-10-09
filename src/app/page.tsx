@@ -16,6 +16,7 @@ import type { LucideIcon } from 'lucide-react'
 import SiteNav from '@/components/SiteNav'
 import HeroMotif from '@/components/HeroMotif'
 import HowItWorks from '@/components/HowItWorks'
+import WhoItsFor from '@/components/WhoItsFor'
 import CreationIntelligence from '@/components/CreationIntelligence'
 import Intelligence from '@/components/Intelligence'
 import WaitlistForm from '@/components/WaitlistForm'
@@ -102,6 +103,9 @@ export default function HomePage() {
             </div>
           </div>
         </section>
+
+        {/* ─────────────────── Who it's for ─────────────────── */}
+        <WhoItsFor />
 
         {/* ──────────────────── Channels ──────────────────── */}
         <section id="channels" className="bg-sand border-y border-line">
