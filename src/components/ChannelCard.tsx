@@ -1,17 +1,21 @@
 import Link from 'next/link'
 import type { Channel, Family } from '@/lib/channels'
+import PoiPin from '@/components/PoiPin'
 
-const tagStyles: Record<Family, { wrap: string; dot: string; label: string }> = {
-  acquisition: { wrap: 'text-brand bg-brand-tint', dot: 'bg-brand', label: 'Acquisition' },
-  activation: { wrap: 'text-emerald-700 bg-emerald-50', dot: 'bg-emerald-500', label: 'Activation' },
+// Pin color per family; "platform" = the map the channel pins sit on (neutral ink).
+type Tag = Family | 'platform'
+const tagStyles: Record<Tag, { wrap: string; pin: string; label: string }> = {
+  acquisition: { wrap: 'text-brand bg-brand-tint', pin: 'text-brand', label: 'Acquisition' },
+  activation: { wrap: 'text-emerald-700 bg-emerald-50', pin: 'text-emerald-500', label: 'Activation' },
+  platform: { wrap: 'text-ink-soft bg-ink/[0.05]', pin: 'text-ink-faint', label: 'Platform' },
 }
 
-export function FamilyTag({ family }: { family: Family }) {
+export function FamilyTag({ family }: { family: Tag }) {
   const s = tagStyles[family]
   return (
     <span
-      className={`inline-flex items-center gap-1.5 rounded-full px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wide ${s.wrap}`}>
-      <span className={`h-1.5 w-1.5 rounded-full ${s.dot}`} />
+      className={`inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wide ${s.wrap}`}>
+      <PoiPin className={`h-2.5 ${s.pin}`} />
       {s.label}
     </span>
   )
@@ -21,10 +25,10 @@ export function ChannelLegend() {
   return (
     <div className="flex flex-wrap items-center gap-x-5 gap-y-2 text-[13px] text-ink-soft">
       <span className="inline-flex items-center gap-1.5">
-        <span className="h-2 w-2 rounded-full bg-brand" /> Acquisition — bring users to the door
+        <PoiPin className="h-3 text-brand" /> Acquisition — bring users to the door
       </span>
       <span className="inline-flex items-center gap-1.5">
-        <span className="h-2 w-2 rounded-full bg-emerald-500" /> Activation &amp; lifecycle — engage them inside
+        <PoiPin className="h-3 text-emerald-500" /> Activation &amp; lifecycle — engage them inside
       </span>
     </div>
   )

@@ -21,7 +21,7 @@ import Intelligence from '@/components/Intelligence'
 import WaitlistForm from '@/components/WaitlistForm'
 import ScrollReveal from '@/components/ScrollReveal'
 import SiteFooter from '@/components/SiteFooter'
-import ChannelCard, { ChannelLegend } from '@/components/ChannelCard'
+import ChannelCard, { ChannelLegend, FamilyTag } from '@/components/ChannelCard'
 import { CHANNELS } from '@/lib/channels'
 
 export default function HomePage() {
@@ -51,7 +51,7 @@ export default function HomePage() {
               </h1>
 
               <p className="mt-6 text-[clamp(16px,1.4vw,19px)] leading-relaxed text-ink-mid max-w-[34rem]">
-                Every marketing channel — email, social, content, ads, and web — unified with the one
+                Every marketing point of interest — email, social, content, ads, and web — unified with the one
                 thing built only for SaaS: a plan &amp; entitlement builder that connects every campaign
                 to the revenue it creates.
               </p>
@@ -288,8 +288,11 @@ function SmallCapability({
   return (
     <div
       className={`lg:col-span-2 rounded-tile bg-white/70 border border-line-violet p-6 transition-colors hover:bg-white ${className}`}>
-      <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-brand-tint text-brand">
-        <Icon size={18} strokeWidth={2} />
+      <div className="flex items-center justify-between">
+        <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-brand-tint text-brand">
+          <Icon size={18} strokeWidth={2} />
+        </div>
+        <FamilyTag family="platform" />
       </div>
       <h3 className="mt-4 font-display text-[17px] font-bold text-ink">{title}</h3>
       <p className="mt-1.5 text-[14px] leading-relaxed text-ink-mid">{body}</p>
