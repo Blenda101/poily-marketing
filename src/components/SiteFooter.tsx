@@ -20,7 +20,7 @@ export default function SiteFooter() {
               <span className="font-display text-lg font-extrabold tracking-tight text-white">Poily</span>
             </Link>
             <p className="mt-3 text-sm leading-relaxed text-white/45">
-              Every marketing channel, plus the one thing built only for SaaS: your plans.
+              Marketing and monetization for SaaS, on one platform.
             </p>
             <Link
               href="/#waitlist"

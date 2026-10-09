@@ -3,11 +3,14 @@ import type { Channel, Family } from '@/lib/channels'
 import PoiPin from '@/components/PoiPin'
 
 // Pin color per family; "platform" = the map the channel pins sit on (neutral ink).
-type Tag = Family | 'platform'
+export type Tag = Family | 'monetization' | 'platform' | 'closed-loop'
 const tagStyles: Record<Tag, { wrap: string; pin: string; label: string }> = {
   acquisition: { wrap: 'text-brand bg-brand-tint', pin: 'text-brand', label: 'Acquisition' },
   activation: { wrap: 'text-emerald-700 bg-emerald-50', pin: 'text-emerald-500', label: 'Activation' },
+  monetization: { wrap: 'text-amber-800 bg-amber-50', pin: 'text-amber-500', label: 'Monetization' },
   platform: { wrap: 'text-ink-soft bg-ink/[0.05]', pin: 'text-ink-faint', label: 'Platform' },
+  // the bridge: attribution belongs to marketing AND monetization — rendered with both pins
+  'closed-loop': { wrap: 'text-ink-mid bg-brand-tint', pin: 'text-brand', label: 'Marketing + Monetization' },
 }
 
 export function FamilyTag({ family }: { family: Tag }) {
@@ -16,6 +19,7 @@ export function FamilyTag({ family }: { family: Tag }) {
     <span
       className={`inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wide ${s.wrap}`}>
       <PoiPin className={`h-2.5 ${s.pin}`} />
+      {family === 'closed-loop' && <PoiPin className="-ml-1.5 h-2.5 text-amber-500" />}
       {s.label}
     </span>
   )
@@ -29,6 +33,20 @@ export function ChannelLegend() {
       </span>
       <span className="inline-flex items-center gap-1.5">
         <PoiPin className="h-3 text-emerald-500" /> Activation &amp; lifecycle — engage them inside
+      </span>
+    </div>
+  )
+}
+
+/** Legend for the homepage Monetization section: what the two pin colors mean there. */
+export function PlatformLegend() {
+  return (
+    <div className="flex flex-wrap items-center gap-x-5 gap-y-2 text-[13px] text-ink-soft">
+      <span className="inline-flex items-center gap-1.5">
+        <PoiPin className="h-3 text-amber-500" /> Monetization — plans, pricing and the revenue they earn
+      </span>
+      <span className="inline-flex items-center gap-1.5">
+        <PoiPin className="h-3 text-ink-faint" /> Platform — the record underneath every channel
       </span>
     </div>
   )

@@ -21,7 +21,7 @@ import Intelligence from '@/components/Intelligence'
 import WaitlistForm from '@/components/WaitlistForm'
 import ScrollReveal from '@/components/ScrollReveal'
 import SiteFooter from '@/components/SiteFooter'
-import ChannelCard, { ChannelLegend, FamilyTag } from '@/components/ChannelCard'
+import ChannelCard, { ChannelLegend, FamilyTag, PlatformLegend, type Tag } from '@/components/ChannelCard'
 import { CHANNELS } from '@/lib/channels'
 
 export default function HomePage() {
@@ -42,7 +42,7 @@ export default function HomePage() {
             {/* copy */}
             <div className="lg:col-span-6">
               <span className="inline-flex items-center gap-2 text-xs font-semibold tracking-[0.14em] uppercase text-brand bg-brand-tint border border-line-violet rounded-full px-3.5 py-1.5">
-                GTM Superpower for SaaS
+                Marketing + Monetization for SaaS
               </span>
 
               <h1 className="mt-6 font-display text-[clamp(38px,5.2vw,68px)] font-extrabold leading-[1.04] tracking-[-0.02em] text-ink">
@@ -51,9 +51,9 @@ export default function HomePage() {
               </h1>
 
               <p className="mt-6 text-[clamp(16px,1.4vw,19px)] leading-relaxed text-ink-mid max-w-[34rem]">
-                Every marketing point of interest — email, social, content, ads, and web — unified with the one
-                thing built only for SaaS: a plan &amp; entitlement builder that connects every campaign
-                to the revenue it creates.
+                Every marketing and monetization point of interest — email, social, content, ads, and web —
+                unified with a SaaS plan &amp; entitlement builder that connects every campaign to the
+                revenue it creates.
               </p>
 
               <div className="mt-9 flex flex-wrap items-center gap-x-5 gap-y-3">
@@ -143,16 +143,27 @@ export default function HomePage() {
         {/* ─────────────────── Platform / wedge ─────────────────── */}
         <section id="platform" className="bg-mist">
           <div className="max-w-shell mx-auto px-5 sm:px-8 py-20 lg:py-28">
-            <div className="max-w-2xl reveal">
-              <span className="text-xs font-semibold tracking-[0.14em] uppercase text-brand">
-                Built for SaaS
-              </span>
-              <h2 className="mt-3 font-display text-[clamp(28px,3.6vw,46px)] font-bold tracking-[-0.015em] text-ink leading-[1.1]">
-                Not bolted on. Built in.
-              </h2>
-              <p className="mt-4 text-[17px] leading-relaxed text-ink-mid">
-                Generic marketing tools stop at the lead. Poily owns your plans, so it follows the money.
-              </p>
+            <div className="reveal flex flex-col gap-6 lg:flex-row lg:items-end lg:justify-between">
+              <div className="max-w-2xl">
+                <span className="text-xs font-semibold tracking-[0.14em] uppercase text-brand">
+                  Built for SaaS
+                </span>
+                <h2 className="mt-3 font-display text-[clamp(28px,3.6vw,46px)] font-bold tracking-[-0.015em] text-ink leading-[1.1]">
+                  <span className="text-brand">Monetization:</span> not bolted on, built in.
+                </h2>
+                <p className="mt-4 text-[17px] leading-relaxed text-ink-mid">
+                  Generic marketing tools stop at the lead. Poily builds your plans.
+                </p>
+                <div className="mt-6">
+                  <PlatformLegend />
+                </div>
+              </div>
+              <a
+                href="/platform"
+                className="inline-flex shrink-0 items-center gap-2 rounded-full border border-brand-mid bg-white px-5 py-3 text-sm font-semibold text-brand transition-colors hover:bg-brand-tint">
+                Explore the platform
+                <ArrowRight size={16} strokeWidth={2.2} />
+              </a>
             </div>
 
             <div className="mt-12 grid lg:grid-cols-6 gap-4">
@@ -161,6 +172,7 @@ export default function HomePage() {
                 className="lg:col-span-3 reveal"
                 icon={Boxes}
                 eyebrow="The wedge"
+                href="/platform/plans-entitlements"
                 title="Plan &amp; Entitlement Builder"
                 body="Define plans and gates once — Poily becomes the source of truth. The same plan renders your pricing page, in-app billing portal, and onboarding, so the price you publish and the price you charge can never drift.">
                 <PlanMotif />
@@ -171,6 +183,8 @@ export default function HomePage() {
                 className="lg:col-span-3 reveal reveal-d1"
                 icon={Repeat}
                 eyebrow="Closed loop"
+                tag="closed-loop"
+                href="/platform/attribution"
                 title="Marketing-to-revenue attribution"
                 body="Connect every touch — ad click, email, content — to the subscription it created. Know what drives MRR, not just clicks.">
                 <AttributionMotif />
@@ -244,6 +258,8 @@ function FeatureTile({
   eyebrow,
   title,
   body,
+  href,
+  tag = 'monetization',
   children,
 }: {
   className?: string
@@ -251,18 +267,23 @@ function FeatureTile({
   eyebrow: string
   title: string
   body: string
+  href: string
+  tag?: Tag
   children: React.ReactNode
 }) {
   return (
     <div
       className={`relative rounded-tile bg-white border border-line-violet p-7 shadow-tile overflow-hidden ${className}`}>
-      <div className="flex items-center gap-3">
-        <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-brand text-white">
-          <Icon size={20} strokeWidth={2} />
+      <div className="flex items-center justify-between gap-3">
+        <div className="flex items-center gap-3">
+          <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-brand text-white">
+            <Icon size={20} strokeWidth={2} />
+          </div>
+          <span className="text-[11px] font-semibold tracking-[0.14em] uppercase text-brand">
+            {eyebrow}
+          </span>
         </div>
-        <span className="text-[11px] font-semibold tracking-[0.14em] uppercase text-brand">
-          {eyebrow}
-        </span>
+        <FamilyTag family={tag} />
       </div>
       <h3
         className="mt-5 font-display text-[clamp(20px,2vw,26px)] font-bold tracking-[-0.01em] text-ink"
@@ -270,6 +291,10 @@ function FeatureTile({
       />
       <p className="mt-3 text-[15px] leading-relaxed text-ink-mid max-w-prose">{body}</p>
       <div className="mt-6">{children}</div>
+      <a href={href} className="group mt-6 inline-flex items-center gap-1 text-[13px] font-semibold text-brand">
+        Learn more
+        <span className="transition-transform group-hover:translate-x-0.5">→</span>
+      </a>
     </div>
   )
 }

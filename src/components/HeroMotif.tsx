@@ -1,9 +1,20 @@
+import PoiPin from '@/components/PoiPin'
+
 /**
  * Signature hero motif (Server Component, CSS-only motion).
- * A product preview of Poily's wedge: a plan & entitlement builder whose changes
- * sync downstream and close the loop back from revenue. Sample workspace data —
+ * A product preview of Poily's wedge: a plan & entitlement builder, and attribution
+ * bridging marketing → monetization (the closed loop). Sample workspace data —
  * illustrative, not a customer claim.
  */
+/** Dashed segment whose dash travels left → right (the shared .flow-path motion). */
+function FlowLine() {
+  return (
+    <svg viewBox="0 0 100 4" preserveAspectRatio="none" className="h-1 w-0 min-w-3 flex-1" fill="none" aria-hidden="true">
+      <path className="flow-path" d="M0 2 L100 2" stroke="#7C3AED" strokeWidth="2" strokeLinecap="round" vectorEffect="non-scaling-stroke" />
+    </svg>
+  )
+}
+
 export default function HeroMotif() {
   return (
     <div className="relative">
@@ -77,28 +88,23 @@ export default function HeroMotif() {
             </div>
           </div>
 
-          {/* Closed-loop connector */}
-          <div className="relative h-9">
-            <svg viewBox="0 0 300 36" className="w-full h-full" fill="none" aria-hidden="true">
-              {/* down into attribution */}
-              <path
-                className="flow-path"
-                d="M150 0 L150 36"
-                stroke="#7C3AED"
-                strokeWidth="2"
-                strokeLinecap="round"
-              />
-              {/* return arc — the "closed loop" back to plans */}
-              <path
-                className="flow-path"
-                d="M150 4 C 250 4, 286 4, 286 18 C 286 32, 250 32, 150 32"
-                stroke="#C9BBF2"
-                strokeWidth="2"
-                strokeLinecap="round"
-              />
-              <circle cx="150" cy="18" r="3.5" fill="#7C3AED" />
-              <circle className="live-dot" cx="150" cy="18" r="6.5" fill="#7C3AED" opacity="0.25" />
-            </svg>
+          {/* Closed-loop connector: Marketing → attribution → Monetization (pins match the badges) */}
+          <div className="flex h-12 items-center gap-2 px-1">
+            <span className="inline-flex shrink-0 items-center gap-1 text-[11px] font-semibold text-brand">
+              <PoiPin className="h-3.5 text-brand" /> Marketing
+            </span>
+            <FlowLine />
+            <span className="inline-flex shrink-0 items-center gap-1 rounded-full border border-line-violet bg-white px-2.5 py-1 text-[11px] font-semibold text-ink-mid shadow-tile">
+              <PoiPin className="h-2.5 text-brand" />
+              <PoiPin className="-ml-1.5 h-2.5 text-amber-500" />
+              <span>
+                Attribution<span className="hidden sm:inline"> closes the loop</span>
+              </span>
+            </span>
+            <FlowLine />
+            <span className="inline-flex shrink-0 items-center gap-1 text-[11px] font-semibold text-amber-700">
+              Monetization <PoiPin className="h-3.5 text-amber-500" />
+            </span>
           </div>
 
           {/* Attribution card */}
