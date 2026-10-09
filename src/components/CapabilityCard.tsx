@@ -7,7 +7,14 @@ import { capabilityHref, type Capability } from '@/lib/platform'
  * Hub card for a /platform capability. Capabilities with a detail page link to it;
  * the rest are self-contained (anchored at /platform#slug) with their key points inline.
  */
-export default function CapabilityCard({ capability: c }: { capability: Capability }) {
+export default function CapabilityCard({
+  capability: c,
+  wide = false,
+}: {
+  capability: Capability
+  /** full-width layout: key points laid out in a row */
+  wide?: boolean
+}) {
   const Icon = c.icon
   const body = (
     <>
@@ -18,8 +25,8 @@ export default function CapabilityCard({ capability: c }: { capability: Capabili
         <FamilyTag family={c.group} />
       </div>
       <h3 className="mt-4 font-display text-[18px] font-bold text-ink">{c.name}</h3>
-      <p className="mt-1.5 text-[14px] leading-relaxed text-ink-mid">{c.card}</p>
-      <ul className="mt-4 flex-1 space-y-2">
+      <p className={`mt-1.5 text-[14px] leading-relaxed text-ink-mid ${wide ? 'max-w-2xl' : ''}`}>{c.card}</p>
+      <ul className={`mt-4 flex-1 ${wide ? 'grid gap-2 sm:grid-cols-3 sm:gap-6' : 'space-y-2'}`}>
         {c.points.map((p) => (
           <li key={p} className="flex gap-2.5 text-[13.5px] leading-snug text-ink-mid">
             <Check size={15} strokeWidth={2.5} className="mt-0.5 shrink-0 text-brand" />

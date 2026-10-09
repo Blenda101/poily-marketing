@@ -21,7 +21,7 @@ import Intelligence from '@/components/Intelligence'
 import WaitlistForm from '@/components/WaitlistForm'
 import ScrollReveal from '@/components/ScrollReveal'
 import SiteFooter from '@/components/SiteFooter'
-import ChannelCard, { ChannelLegend, FamilyTag, PlatformLegend } from '@/components/ChannelCard'
+import ChannelCard, { ChannelLegend, FamilyTag, PlatformLegend, type Tag } from '@/components/ChannelCard'
 import { CHANNELS } from '@/lib/channels'
 
 export default function HomePage() {
@@ -42,7 +42,7 @@ export default function HomePage() {
             {/* copy */}
             <div className="lg:col-span-6">
               <span className="inline-flex items-center gap-2 text-xs font-semibold tracking-[0.14em] uppercase text-brand bg-brand-tint border border-line-violet rounded-full px-3.5 py-1.5">
-                GTM Superpower for SaaS
+                Marketing + Monetization for SaaS
               </span>
 
               <h1 className="mt-6 font-display text-[clamp(38px,5.2vw,68px)] font-extrabold leading-[1.04] tracking-[-0.02em] text-ink">
@@ -51,9 +51,9 @@ export default function HomePage() {
               </h1>
 
               <p className="mt-6 text-[clamp(16px,1.4vw,19px)] leading-relaxed text-ink-mid max-w-[34rem]">
-                Every marketing point of interest — email, social, content, ads, and web — unified with the one
-                thing built only for SaaS: a plan &amp; entitlement builder that connects every campaign
-                to the revenue it creates.
+                Every marketing and monetization point of interest — email, social, content, ads, and web —
+                unified with a SaaS plan &amp; entitlement builder that connects every campaign to the
+                revenue it creates.
               </p>
 
               <div className="mt-9 flex flex-wrap items-center gap-x-5 gap-y-3">
@@ -145,7 +145,10 @@ export default function HomePage() {
           <div className="max-w-shell mx-auto px-5 sm:px-8 py-20 lg:py-28">
             <div className="reveal flex flex-col gap-6 lg:flex-row lg:items-end lg:justify-between">
               <div className="max-w-2xl">
-                <h2 className="font-display text-[clamp(28px,3.6vw,46px)] font-bold tracking-[-0.015em] text-ink leading-[1.1]">
+                <span className="text-xs font-semibold tracking-[0.14em] uppercase text-brand">
+                  Built for SaaS
+                </span>
+                <h2 className="mt-3 font-display text-[clamp(28px,3.6vw,46px)] font-bold tracking-[-0.015em] text-ink leading-[1.1]">
                   <span className="text-brand">Monetization:</span> not bolted on, built in.
                 </h2>
                 <p className="mt-4 text-[17px] leading-relaxed text-ink-mid">
@@ -180,6 +183,7 @@ export default function HomePage() {
                 className="lg:col-span-3 reveal reveal-d1"
                 icon={Repeat}
                 eyebrow="Closed loop"
+                tag="closed-loop"
                 href="/platform/attribution"
                 title="Marketing-to-revenue attribution"
                 body="Connect every touch — ad click, email, content — to the subscription it created. Know what drives MRR, not just clicks.">
@@ -255,6 +259,7 @@ function FeatureTile({
   title,
   body,
   href,
+  tag = 'monetization',
   children,
 }: {
   className?: string
@@ -263,6 +268,7 @@ function FeatureTile({
   title: string
   body: string
   href: string
+  tag?: Tag
   children: React.ReactNode
 }) {
   return (
@@ -277,7 +283,7 @@ function FeatureTile({
             {eyebrow}
           </span>
         </div>
-        <FamilyTag family="monetization" />
+        <FamilyTag family={tag} />
       </div>
       <h3
         className="mt-5 font-display text-[clamp(20px,2vw,26px)] font-bold tracking-[-0.01em] text-ink"

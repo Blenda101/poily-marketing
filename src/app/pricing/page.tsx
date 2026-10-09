@@ -119,8 +119,8 @@ export default async function PricingPage() {
               One platform. One bill. <span className="text-brand">No stack to stitch.</span>
             </h1>
             <p className="mx-auto mt-6 max-w-2xl text-[clamp(16px,1.4vw,19px)] leading-relaxed text-ink-mid">
-              Marketing, plans, billing and attribution — priced for the stage you’re at, and built to
-              grow with your portfolio.
+              Marketing and monetization — priced for the stage you’re at, and built to grow with your
+              portfolio.
             </p>
           </div>
         </section>

@@ -33,14 +33,20 @@ import type { Comparison, Faq, FeatureSection } from '@/lib/channels'
  * Nomenclature (customer-facing): your portfolio › product › line. Billing runs on Stripe.
  */
 
-export type CapabilityGroup = 'monetization' | 'platform'
+export type CapabilityGroup = 'monetization' | 'closed-loop' | 'platform'
 
 export const CAPABILITY_GROUPS: Record<CapabilityGroup, { label: string; title: string; blurb: string }> = {
   monetization: {
     label: 'Monetization',
     title: 'Own your plans. Monetize on purpose.',
     blurb:
-      'Plans, prices, limits and upgrades defined once — and every campaign followed to the revenue it earns.',
+      'Plans, prices, limits and upgrades defined once — and read by your pricing page, checkout, product and marketing.',
+  },
+  'closed-loop': {
+    label: 'Closed loop',
+    title: 'Where marketing meets monetization.',
+    blurb:
+      'Because Poily runs your marketing and owns your plans, every campaign is followed all the way to the revenue it earns.',
   },
   platform: {
     label: 'Platform',
@@ -183,7 +189,7 @@ export const CAPABILITIES: Capability[] = [
   {
     slug: 'attribution',
     name: 'Marketing-to-revenue attribution',
-    group: 'monetization',
+    group: 'closed-loop',
     icon: Repeat,
     card: 'Follow every touch from first visit to trial to subscription — and know what actually drives MRR.',
     points: [

@@ -19,7 +19,7 @@ const dmSans = DM_Sans({
   display: 'swap',
 })
 
-const title = 'Poily — Superpowers for SaaS'
+const title = 'Poily — Marketing & Monetization Platform for SaaS'
 const description =
   'Poily is the all-in-one marketing and monetization platform for SaaS — email, social, content, ads, and web, unified with a plan & entitlement builder that connects every campaign to revenue. Join the waitlist.'
 
@@ -33,6 +33,7 @@ export const metadata: Metadata = {
   applicationName: 'Poily',
   keywords: [
     'SaaS marketing platform',
+    'SaaS monetization platform',
     'marketing automation',
     'monetization',
     'entitlements',

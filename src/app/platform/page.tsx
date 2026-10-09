@@ -12,7 +12,7 @@ export const metadata: Metadata = {
   alternates: { canonical: '/platform' },
 }
 
-const ORDER: CapabilityGroup[] = ['monetization', 'platform']
+const ORDER: CapabilityGroup[] = ['monetization', 'closed-loop', 'platform']
 
 export default function PlatformHubPage() {
   return (
@@ -26,8 +26,8 @@ export default function PlatformHubPage() {
             The part generic marketing tools <span className="text-brand">can’t reach.</span>
           </h1>
           <p className="mt-5 max-w-2xl text-[18px] leading-relaxed text-ink-mid">
-            Channels bring customers in. Underneath them, Poily owns your plans and keeps one record of
-            every customer — so pricing, upgrades and attribution all run on the same truth.
+            Marketing brings customers in; monetization turns them into revenue. Poily runs both — your plans
+            and one record of every customer — so pricing, upgrades and attribution run on the same truth.
           </p>
           <nav className="mt-8 flex flex-wrap gap-3" aria-label="Platform sections">
             {ORDER.map((g) => (
@@ -59,9 +59,11 @@ export default function PlatformHubPage() {
                   </h2>
                   <p className="mt-4 text-[17px] leading-relaxed text-ink-mid">{group.blurb}</p>
                 </div>
-                <div className="mt-10 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+                {/* the closed loop bridges both groups — one wide card, not a grid cell */}
+                <div
+                  className={`mt-10 grid gap-4 ${g === 'closed-loop' ? '' : 'sm:grid-cols-2 lg:grid-cols-3'}`}>
                   {capabilitiesIn(g).map((c) => (
-                    <CapabilityCard key={c.slug} capability={c} />
+                    <CapabilityCard key={c.slug} capability={c} wide={g === 'closed-loop'} />
                   ))}
                 </div>
               </div>
