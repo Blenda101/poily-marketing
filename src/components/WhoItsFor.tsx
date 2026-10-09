@@ -21,7 +21,7 @@ import PoiPin from '@/components/PoiPin'
  * build context, not Poily's headline (see positioning: AI is icing, not cake).
  */
 
-const BUILT_WITH = ['Lovable', 'Bolt', 'Replit', 'v0', 'Cursor', 'Claude Code', 'Codex']
+const BUILT_WITH = ['Lovable', 'Bolt', 'Replit', 'v0', 'Cursor', 'Claude Code', 'Codex', 'GitHub Copilot']
 
 const AUDIENCES: { icon: LucideIcon; title: string; body: string; via: string }[] = [
   {
