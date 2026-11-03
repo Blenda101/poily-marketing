@@ -946,6 +946,7 @@ export const FOOTER_GROUPS: { title: string; links: FooterLink[] }[] = [
       { label: 'CRM & segmentation', href: capabilityHrefBySlug('crm-segmentation') },
       { label: 'Analytics & reporting', href: capabilityHrefBySlug('analytics') },
       { label: 'Integrations & API', href: capabilityHrefBySlug('integrations-api') },
+      { label: 'Developer docs', href: 'https://docs.poily.com' },
     ],
   },
 ]
