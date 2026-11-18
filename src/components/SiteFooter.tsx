@@ -53,8 +53,12 @@ export default function SiteFooter() {
         </div>
 
         <div className="mt-12 flex flex-col gap-3 border-t border-white/[0.07] pt-6 sm:flex-row sm:items-center sm:justify-between">
-          <span className="text-xs text-white/30">&copy; 2026 Poily. All rights reserved.</span>
-          <span className="text-xs text-white/30">Superpowers for SaaS.</span>
+          <span className="text-xs text-white/30">&copy; 2026 Data Savvy, Inc. All rights reserved.</span>
+          <nav aria-label="Legal" className="flex flex-wrap gap-x-5 gap-y-2">
+            <Link href="/privacy" className="text-xs text-white/45 transition-colors hover:text-white">Privacy</Link>
+            <Link href="/terms" className="text-xs text-white/45 transition-colors hover:text-white">Terms</Link>
+            <Link href="/data-deletion" className="text-xs text-white/45 transition-colors hover:text-white">Data deletion</Link>
+          </nav>
         </div>
       </div>
     </footer>

@@ -78,6 +78,12 @@ export const metadata: Metadata = {
     title,
     description,
   },
+  // Domain verification for Poily's social developer apps (Meta, Pinterest).
+  // Google Search Console verifies via DNS TXT, not here.
+  other: {
+    'facebook-domain-verification': '2bqx94brb54vlq00djyp7eu7tzjzn4',
+    'p:domain_verify': '340f42b3b6b5a1fdb01fd2ab62020021',
+  },
 }
 
 export const viewport: Viewport = {
