@@ -7,6 +7,7 @@ import SiteFooter from '@/components/SiteFooter'
 import ChannelCard, { FamilyTag } from '@/components/ChannelCard'
 import { channelVisuals, flavorVisuals } from '@/components/channel-visuals'
 import { CHANNELS, channelBySlug, FAMILIES } from '@/lib/channels'
+import { RoadmapBadge, RoadmapBanner, RoadmapMark, RoadmapNote } from '@/components/RoadmapBadge'
 
 /** Highlight the channel's keyword within the H1 in brand violet. */
 function highlightKeyword(text: string, keyword?: string) {
@@ -49,6 +50,12 @@ export default function ChannelDetailPage({ params }: { params: { slug: string }
   const Icon = channel.icon
   const Visual = channelVisuals[channel.slug]
   const related = channel.related.map(channelBySlug).filter(Boolean) as typeof CHANNELS
+  const onRoadmap = channel.availability === 'roadmap'
+  // Any marked part on the page earns the note that explains what the mark means.
+  const hasRoadmapPart =
+    onRoadmap ||
+    (channel.featureSections ?? []).some((f) => f.availability === 'roadmap') ||
+    (channel.comparison?.rows ?? []).some((r) => r.us === 'roadmap')
 
   return (
     <>
@@ -71,11 +78,17 @@ export default function ChannelDetailPage({ params }: { params: { slug: string }
                   <Icon size={24} strokeWidth={2} />
                 </span>
                 <FamilyTag family={channel.family} />
+                {onRoadmap && <RoadmapBadge />}
               </div>
               <h1 className="mt-5 font-display text-[clamp(32px,4.4vw,54px)] font-extrabold leading-[1.06] tracking-[-0.02em] text-ink">
                 {highlightKeyword(channel.h1, channel.keyword)}
               </h1>
               <p className="mt-5 max-w-2xl text-[18px] leading-relaxed text-ink-mid">{channel.intro}</p>
+              {onRoadmap && (
+                <div className="max-w-2xl">
+                  <RoadmapBanner name={channel.name} />
+                </div>
+              )}
               <div className="mt-8 flex flex-wrap items-center gap-x-5 gap-y-3">
                 <a
                   href="/#waitlist"
@@ -164,7 +177,10 @@ export default function ChannelDetailPage({ params }: { params: { slug: string }
                     <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-brand-tint text-brand">
                       <f.icon size={20} strokeWidth={2} />
                     </div>
-                    <h3 className="mt-4 font-display text-[17px] font-bold text-ink">{f.title}</h3>
+                    <div className="mt-4 flex flex-wrap items-center gap-2">
+                      <h3 className="font-display text-[17px] font-bold text-ink">{f.title}</h3>
+                      {f.availability === 'roadmap' && <RoadmapMark />}
+                    </div>
                     <p className="mt-1.5 text-[14px] leading-relaxed text-ink-mid">{f.body}</p>
                   </div>
                 ))}
@@ -269,7 +285,9 @@ export default function ChannelDetailPage({ params }: { params: { slug: string }
                           )}
                         </td>
                         <td className="bg-brand-tint/40 px-4 py-3.5 text-center">
-                          {r.us ? (
+                          {r.us === 'roadmap' ? (
+                            <RoadmapMark />
+                          ) : r.us ? (
                             <Check size={18} strokeWidth={2.5} className="inline text-brand" />
                           ) : (
                             <span className="text-ink-faint/50">—</span>
@@ -280,6 +298,7 @@ export default function ChannelDetailPage({ params }: { params: { slug: string }
                   </tbody>
                 </table>
               </div>
+              {hasRoadmapPart && <RoadmapNote className="mt-4 max-w-2xl" />}
             </div>
           </section>
         )}

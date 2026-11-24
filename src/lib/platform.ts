@@ -231,7 +231,8 @@ export const CAPABILITIES: Capability[] = [
         {
           icon: Filter,
           title: 'Funnel to subscription',
-          body: 'Visit to lead to signup to trial to paid — one funnel, per product line, with drop-off at every step.',
+          body: 'Visit to lead to signup to trial to paid — one funnel, per product line, with drop-off at every step. The funnel runs today as far as the lead and the email click; carrying it through trial to paid is the roadmap.',
+          availability: 'roadmap',
         },
         {
           icon: Megaphone,
@@ -241,7 +242,8 @@ export const CAPABILITIES: Capability[] = [
         {
           icon: DollarSign,
           title: 'Revenue by source',
-          body: 'Because the subscription sits on a Poily plan, every source and campaign rolls up to the MRR it created.',
+          body: 'Because the subscription sits on a Poily plan, every source and campaign rolls up to the MRR it created. Not built yet: the plan and the price are known today, but the dollar rollup needs a read of your Stripe, which stays yours.',
+          availability: 'roadmap',
         },
         {
           icon: Users,
@@ -255,8 +257,8 @@ export const CAPABILITIES: Capability[] = [
           { label: 'UTM and referrer capture', them: true, us: true },
           { label: 'Traffic and campaign reports', them: true, us: true },
           { label: 'First and latest touch on the customer record', them: false, us: true },
-          { label: 'Funnel through trial to subscription', them: false, us: true },
-          { label: 'Revenue by source, on your real plans', them: false, us: true },
+          { label: 'Funnel through trial to subscription', them: false, us: 'roadmap' },
+          { label: 'Revenue by source, on your real plans', them: false, us: 'roadmap' },
           { label: 'Segments you can market to directly', them: false, us: true },
         ],
       },

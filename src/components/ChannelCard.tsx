@@ -1,6 +1,7 @@
 import Link from 'next/link'
 import type { Channel, Family } from '@/lib/channels'
 import PoiPin from '@/components/PoiPin'
+import { RoadmapMark } from '@/components/RoadmapBadge'
 
 // Pin color per family; "platform" = the map the channel pins sit on (neutral ink).
 export type Tag = Family | 'monetization' | 'platform' | 'closed-loop'
@@ -64,7 +65,10 @@ export default function ChannelCard({ channel }: { channel: Channel }) {
         </div>
         <FamilyTag family={channel.family} />
       </div>
-      <h3 className="mt-4 font-display text-[18px] font-bold text-ink">{channel.name}</h3>
+      <div className="mt-4 flex flex-wrap items-center gap-2">
+        <h3 className="font-display text-[18px] font-bold text-ink">{channel.name}</h3>
+        {channel.availability === 'roadmap' && <RoadmapMark />}
+      </div>
       <p className="mt-1.5 flex-1 text-[14px] leading-relaxed text-ink-mid">{channel.card}</p>
       <span className="mt-4 inline-flex items-center gap-1 text-[13px] font-semibold text-brand">
         Learn more

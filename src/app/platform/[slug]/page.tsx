@@ -7,6 +7,7 @@ import SiteFooter from '@/components/SiteFooter'
 import { FamilyTag } from '@/components/ChannelCard'
 import CapabilityCard from '@/components/CapabilityCard'
 import { CAPABILITIES, CAPABILITY_GROUPS, capabilityBySlug, type Capability } from '@/lib/platform'
+import { RoadmapMark, RoadmapNote } from '@/components/RoadmapBadge'
 
 /** Only capabilities with a `detail` block get a page; the rest live on the /platform hub. */
 export const dynamicParams = false
@@ -44,6 +45,10 @@ export default function CapabilityPage({ params }: { params: { slug: string } })
   const d = cap.detail
   const Icon = cap.icon
   const related = cap.related.map(capabilityBySlug).filter(Boolean) as Capability[]
+  // The capability ships; parts of it may not. Any marked part earns the explaining note.
+  const hasRoadmapPart =
+    (d.featureSections ?? []).some((f) => f.availability === 'roadmap') ||
+    (d.comparison?.rows ?? []).some((r) => r.us === 'roadmap')
 
   const faqJsonLd = d.faq?.length
     ? {
@@ -147,7 +152,10 @@ export default function CapabilityPage({ params }: { params: { slug: string } })
                   <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-brand-tint text-brand">
                     <f.icon size={20} strokeWidth={2} />
                   </div>
-                  <h3 className="mt-4 font-display text-[17px] font-bold text-ink">{f.title}</h3>
+                  <div className="mt-4 flex flex-wrap items-center gap-2">
+                    <h3 className="font-display text-[17px] font-bold text-ink">{f.title}</h3>
+                    {f.availability === 'roadmap' && <RoadmapMark />}
+                  </div>
                   <p className="mt-1.5 text-[14px] leading-relaxed text-ink-mid">{f.body}</p>
                 </div>
               ))}
@@ -186,7 +194,9 @@ export default function CapabilityPage({ params }: { params: { slug: string } })
                           )}
                         </td>
                         <td className="bg-brand-tint/40 px-4 py-3.5 text-center">
-                          {r.us ? (
+                          {r.us === 'roadmap' ? (
+                            <RoadmapMark />
+                          ) : r.us ? (
                             <Check size={18} strokeWidth={2.5} className="inline text-brand" />
                           ) : (
                             <span className="text-ink-faint/50">—</span>
@@ -197,6 +207,7 @@ export default function CapabilityPage({ params }: { params: { slug: string } })
                   </tbody>
                 </table>
               </div>
+              {hasRoadmapPart && <RoadmapNote className="mt-4 max-w-2xl" />}
             </div>
           </section>
         )}
