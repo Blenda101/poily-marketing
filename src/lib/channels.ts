@@ -34,6 +34,7 @@ import {
   MessageCircle,
 } from 'lucide-react'
 import type { LucideIcon } from 'lucide-react'
+import type { Availability } from '@/lib/availability'
 import { capabilityHrefBySlug } from '@/lib/platform'
 
 export type Family = 'acquisition' | 'activation'
@@ -43,10 +44,17 @@ export const FAMILIES: Record<Family, { label: string; blurb: string }> = {
   activation: { label: 'Activation & lifecycle', blurb: 'Engage them inside the product.' },
 }
 
-export type FeatureSection = { icon: LucideIcon; title: string; body: string }
+export type FeatureSection = {
+  icon: LucideIcon
+  title: string
+  body: string
+  /** omit when shipped; 'roadmap' renders the mark and suppresses any present-tense tick */
+  availability?: Availability
+}
 export type Comparison = {
   theirLabel: string
-  rows: { label: string; them: boolean; us: boolean }[]
+  /** `us: 'roadmap'` is NOT a tick — the row renders as planned, never as a capability. */
+  rows: { label: string; them: boolean; us: boolean | Availability }[]
 }
 export type Faq = { q: string; a: string }
 /** A sub-surface of a single channel (e.g. Messaging → in-app / push / SMS). */
@@ -65,6 +73,8 @@ export type Channel = {
   name: string
   family: Family
   icon: LucideIcon
+  /** omit when shipped; 'roadmap' banners the page and marks the card */
+  availability?: Availability
   /** one-line description for the card */
   card: string
   seoTitle: string
@@ -144,7 +154,8 @@ export const CHANNELS: Channel[] = [
       {
         icon: LineChart,
         title: 'Reporting that ends at MRR',
-        body: 'Opens and clicks, of course — but also the trials started and subscriptions created, so you see the revenue each campaign actually drove.',
+        body: 'Opens and clicks, of course — but also the trials started and subscriptions created, so you see the revenue each campaign actually drove. Opens, clicks, leads and source are live today; the trial-and-subscription rollup is the roadmap half.',
+        availability: 'roadmap',
       },
     ],
     comparison: {
@@ -539,6 +550,7 @@ export const CHANNELS: Channel[] = [
   {
     slug: 'advertising',
     name: 'Digital advertising',
+    availability: 'roadmap',
     family: 'acquisition',
     icon: Megaphone,
     card: 'Paid search and social, with audiences synced and ROAS in MRR.',
@@ -600,7 +612,6 @@ export const CHANNELS: Channel[] = [
         { label: 'Creative variants', them: true, us: true },
         { label: 'Audiences built from plan data', them: false, us: true },
         { label: 'Automatic sync (no CSV)', them: false, us: true },
-        { label: 'ROAS measured in MRR', them: false, us: true },
         { label: 'One customer record across every channel', them: false, us: true },
       ],
     },
@@ -619,7 +630,7 @@ export const CHANNELS: Channel[] = [
       },
       {
         q: 'Can I measure true ROAS?',
-        a: 'Yes — return is measured against the actual MRR ads produced, because Poily owns the subscription end of the journey.',
+        a: 'Not yet. Measuring return against real MRR is the design intent — Poily owns your plans, so it knows the subscription an ad produced — but neither the ad channel nor the revenue rollup is built. Treat ROAS in MRR as the roadmap, not as something you can run today.',
       },
     ],
   },
