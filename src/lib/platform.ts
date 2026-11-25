@@ -242,7 +242,7 @@ export const CAPABILITIES: Capability[] = [
         {
           icon: DollarSign,
           title: 'Revenue by source',
-          body: 'Because the subscription sits on a Poily plan, every source and campaign rolls up to the MRR it created. Not built yet: the plan and the price are known today, but the dollar rollup needs a read of your Stripe, which stays yours.',
+          body: 'Because the subscription sits on a Poily plan, every source and campaign rolls up to the MRR it created. Not built yet, but closer than it sounds: Poily already holds the plan each account is on and what that plan costs, so committed MRR is a reporting view away. Collected revenue — after discounts, proration, tax and failed charges — reads from your billing provider, which stays yours.',
           availability: 'roadmap',
         },
         {
